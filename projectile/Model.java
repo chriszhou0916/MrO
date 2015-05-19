@@ -28,7 +28,7 @@ public class Model
     {
         currAY = gravity;
         initialVX = initialV*Math.cos(initialAngle);
-        initialVY = initialV*Math.sin(initialAngle);
+        initialVY = -initialV*Math.sin(initialAngle);
     }
     
     public void fire()
@@ -41,10 +41,11 @@ public class Model
     public void step(int timeMili)
     {
         timeElapsed+=timeMili;
-        double timeSec = timeMili/1000.0;
+        double timeSec = timeElapsed/1000.0;
+        System.out.println(timeSec);
 
-        currX = currX + initialVX*timeSec + currAX*timeSec*timeSec*0.5;
-        currY = currY + initialVY*timeSec + currAY*timeSec*timeSec*0.5;
+        currX = initialX + initialVX*timeSec + currAX*timeSec*timeSec*0.5;
+        currY = initialY + initialVY*timeSec + currAY*timeSec*timeSec*0.5;
         altitude = altitude+initialVY*timeSec + altitude*timeSec*timeSec*0.5;
         if(altitude<=0)
         {

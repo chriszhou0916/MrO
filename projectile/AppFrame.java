@@ -14,9 +14,13 @@ public class AppFrame extends JFrame
     public AppFrame()
     {
         setSize(FRAME_WIDTH, FRAME_HEIGHT);
-        FlyingObject a = new FlyingObject();
+        
+        setTitle("Projectile Motion");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        final FlyingObject a = new FlyingObject();
         add(a);
         final int DELAY = 50;
+        setVisible(true);
         class TimerListener implements ActionListener
         {
             public void actionPerformed(ActionEvent event)
