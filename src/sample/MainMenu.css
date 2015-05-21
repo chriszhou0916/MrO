@@ -1,0 +1,13 @@
+.root{
+    -fx-background-color: #99FF99;
+
+}
+.label{
+    -fx-text-fill: blue;
+
+}
+.button-fire{
+    -fx-background-color: linear-gradient(yellow,red);
+    -fx-text-fill:#383838;
+
+}
