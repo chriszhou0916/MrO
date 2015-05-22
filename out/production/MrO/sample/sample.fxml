@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.*?>
+<?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.geometry.*?>
@@ -33,7 +35,7 @@
                   <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="66.0" text="time(s)" GridPane.rowIndex="2" />
                   <TextField editable="false" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <TextField editable="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <TextField editable="false" GridPane.columnIndex="1" />
+                  <TextField fx:id="timeField" editable="false" GridPane.columnIndex="1" />
                </children>
                <opaqueInsets>
                   <Insets />
@@ -76,7 +78,7 @@
             <HBox />
             <HBox alignment="CENTER" spacing="20.0">
                <children>
-                  <Button fx:id="itemSelection" alignment="CENTER" mnemonicParsing="false" styleClass="button-fire" stylesheets="@MainMenu.css" text="Fire" />
+                  <Button fx:id="fireButton" alignment="CENTER" mnemonicParsing="false" onAction="#fireButtonClicked" styleClass="button-fire" stylesheets="@MainMenu.css" text="Fire" />
                   <Button mnemonicParsing="false" text="Erase" />
                </children>
             </HBox>
@@ -87,4 +89,7 @@
          </children>
       </VBox>
    </right>
+   <center>
+      <Group BorderPane.alignment="CENTER" />
+   </center>
 </BorderPane>

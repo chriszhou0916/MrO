@@ -1,4 +1,4 @@
-
+package sample;
 /**
  * Write a description of class FlyingThing here.
  * 
