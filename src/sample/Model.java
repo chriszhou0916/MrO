@@ -21,7 +21,7 @@ public class Model
         initialX = x;
         initialY = y;
         initialV = v;
-        initialAngle = angle;        
+        initialAngle = Math.toRadians(angle);
     }
     
     public void initialize()
@@ -42,7 +42,6 @@ public class Model
     {
         timeElapsed+=timeMili;
         double timeSec = timeElapsed/1000.0;
-        System.out.println(timeSec);
 
         currX = initialX + initialVX*timeSec + currAX*timeSec*timeSec*0.5;
         currY = initialY + initialVY*timeSec + currAY*timeSec*timeSec*0.5;
