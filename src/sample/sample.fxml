@@ -94,7 +94,7 @@
    <center>
       <Pane fx:id="centralPane" prefHeight="643.0" prefWidth="796.0" BorderPane.alignment="CENTER">
          <children>
-            <ImageView fx:id="target" fitHeight="150.0" fitWidth="200.0" layoutX="524.0" layoutY="385.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="target" fitHeight="150.0" fitWidth="200.0" layoutX="533.0" layoutY="381.0" pickOnBounds="true" preserveRatio="true">
                <cursor>
                   <Cursor fx:constant="MOVE" />
                </cursor>
