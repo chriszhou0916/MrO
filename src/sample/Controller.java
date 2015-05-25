@@ -53,7 +53,7 @@ public class Controller implements Initializable{
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         //initialize itemList
-        itemList.getItems().addAll("ball", "car", "human","piano");
+        itemList.getItems().addAll("ball", "ziqi", "Mr.O","piano");
         Image img = new Image("file:persons.jpg");
         target.setImage(img);
         centralPane.getChildren().add(makeDraggable(target));
@@ -89,6 +89,7 @@ public class Controller implements Initializable{
         gc.setFill(Color.RED);
         gc.fillOval(circle.getX(),circle.getY(),20,20);
         Image mrO = new Image("file:mro.jpg");
+        Image ziqi = new Image("file:ziqi.jpg");
 
 
 //        border.setCenter(shape);
@@ -96,13 +97,18 @@ public class Controller implements Initializable{
 //        Timeline timeline = new Timeline();
 //        timeline.setCycleCount(Timeline.INDEFINITE);
 
+        String selected = itemList.getSelectionModel().getSelectedItem();
         timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
                 gc.clearRect(0,0,projectileLayer.getWidth(),projectileLayer.getHeight());
                 circle.step(50);
-                gc.drawImage(mrO,circle.getX(),circle.getY());
-                //gc.fillOval(circle.getX(),circle.getY(),30,30);
+                if(selected.equals("Mr.O"))
+                    gc.drawImage(mrO,circle.getX(),circle.getY());
+                else if (selected.equals("ball"))
+                    gc.fillOval(circle.getX(),circle.getY(),30,30);
+                else if(selected.equals("ziqi"))
+                    gc.drawImage(ziqi,circle.getX(),circle.getY(),100,120);
                 gcTraj.fillOval(circle.getX()+10,circle.getY()+10,5,5);
             }
         };
