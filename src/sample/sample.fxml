@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.image.*?>
 <?import javafx.scene.canvas.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.shape.*?>
@@ -15,7 +16,7 @@
 
 <BorderPane fx:id="border" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
    <right>
-      <VBox maxWidth="170.0" styleClass="right-menu" stylesheets="@MainMenu.css" BorderPane.alignment="CENTER">
+      <VBox maxWidth="170.0" prefHeight="643.0" prefWidth="170.0" styleClass="right-menu" stylesheets="@MainMenu.css" BorderPane.alignment="CENTER">
          <padding>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </padding>
@@ -91,6 +92,14 @@
       </VBox>
    </right>
    <center>
-      <Pane fx:id="centralPane" prefHeight="600.0" prefWidth="800.0" BorderPane.alignment="CENTER" />
+      <Pane fx:id="centralPane" prefHeight="643.0" prefWidth="796.0" BorderPane.alignment="CENTER">
+         <children>
+            <ImageView fx:id="target" fitHeight="150.0" fitWidth="200.0" layoutX="533.0" layoutY="381.0" pickOnBounds="true" preserveRatio="true">
+               <cursor>
+                  <Cursor fx:constant="MOVE" />
+               </cursor>
+            </ImageView>
+         </children>
+      </Pane>
    </center>
 </BorderPane>

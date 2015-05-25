@@ -6,9 +6,11 @@ import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -16,6 +18,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.util.Duration;
 
+import javafx.scene.image.*;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -38,7 +41,8 @@ public class Controller implements Initializable{
     private TextField initialVField;
     @FXML
     private BorderPane border;
-
+    @FXML
+    private ImageView target;
     @FXML
     private Pane centralPane;
 
@@ -50,7 +54,9 @@ public class Controller implements Initializable{
     public void initialize(URL location, ResourceBundle resources) {
         //initialize itemList
         itemList.getItems().addAll("ball", "car", "human","piano");
-
+        Image img = new Image("file:persons.jpg");
+        target.setImage(img);
+        centralPane.getChildren().add(makeDraggable(target));
     }
 
 
@@ -64,7 +70,8 @@ public class Controller implements Initializable{
 
     }
     public void fireButtonClicked(){
-
+        if(!isInt(angleField)||!isInt(initialVField))
+            return;
         Model circle = new Model (10,300,Integer.parseInt(angleField.getText()),Integer.parseInt(initialVField.getText()));
         circle.setG(5);
         circle.initialize();
@@ -81,6 +88,7 @@ public class Controller implements Initializable{
          gcTraj = trajectoryLayer.getGraphicsContext2D();
         gc.setFill(Color.RED);
         gc.fillOval(circle.getX(),circle.getY(),20,20);
+        Image mrO = new Image("file:mro.jpg");
 
 
 //        border.setCenter(shape);
@@ -93,7 +101,8 @@ public class Controller implements Initializable{
             public void handle(long now) {
                 gc.clearRect(0,0,projectileLayer.getWidth(),projectileLayer.getHeight());
                 circle.step(50);
-                gc.fillOval(circle.getX(),circle.getY(),30,30);
+                gc.drawImage(mrO,circle.getX(),circle.getY());
+                //gc.fillOval(circle.getX(),circle.getY(),30,30);
                 gcTraj.fillOval(circle.getX()+10,circle.getY()+10,5,5);
             }
         };
@@ -107,5 +116,59 @@ public class Controller implements Initializable{
 
 
 
+    }
+    private Node makeDraggable(final Node node) {
+        final DragC dragContext = new DragC();
+        final Group wrapGroup = new Group(node);
+
+
+        wrapGroup.addEventFilter(
+                MouseEvent.MOUSE_PRESSED,
+                mouseEvent -> {
+
+                        // remember initial mouse cursor coordinates
+                        // and node position
+                        dragContext.mouseAnchorX = mouseEvent.getX();
+                        dragContext.mouseAnchorY = mouseEvent.getY();
+                        dragContext.initialTranslateX =
+                                node.getTranslateX();
+                        dragContext.initialTranslateY =
+                                node.getTranslateY();
+                }
+        );
+
+        wrapGroup.addEventFilter(
+                MouseEvent.MOUSE_DRAGGED,
+                mouseEvent -> {
+                        // shift node from its initial position by delta
+                        // calculated from mouse cursor movement
+                        node.setTranslateX(
+                                dragContext.initialTranslateX
+                                        + mouseEvent.getX()
+                                        - dragContext.mouseAnchorX);
+                        node.setTranslateY(
+                                dragContext.initialTranslateY
+                                        + mouseEvent.getY()
+                                        - dragContext.mouseAnchorY);
+                }
+        );
+        return wrapGroup;
+    }
+
+    private static final class DragC {
+        public double mouseAnchorX;
+        public double mouseAnchorY;
+        public double initialTranslateX;
+        public double initialTranslateY;
+    }
+
+    private boolean isInt(TextField input){
+        try{
+            int age = Integer.parseInt(input.getText());
+            return true;
+        }catch(NumberFormatException e){
+            ErrorMessage.showMessage("Please enter valid number");
+            return false;
+        }
     }
 }
