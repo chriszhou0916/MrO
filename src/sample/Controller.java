@@ -42,9 +42,15 @@ public class Controller implements Initializable{
     @FXML
     private TextField initialVField;
     @FXML
+    private TextField diameterField;
+    @FXML
     private BorderPane border;
     @FXML
     private ImageView target;
+    @FXML
+    private ImageView backgroundViewer;
+    @FXML
+    private ImageView canonViewer;
     @FXML
     private Pane centralPane;
 
@@ -57,7 +63,12 @@ public class Controller implements Initializable{
     public void initialize(URL location, ResourceBundle resources) {
         //initialize itemList
         itemList.getItems().addAll("ball", "ziqi", "Mr.O","piano");
+        Image background = new Image("file:background.png",794,643,false,false);
+        backgroundViewer.setImage(background);
         Image img = new Image("file:persons.jpg");
+        Image canon = new Image("file:canon.png");
+        canonViewer.setImage(canon);
+        makeDrag(canonViewer);
         target.setImage(img);
         makeDrag(target);
         //centralPane.getChildren().add(makeDraggable(target));
@@ -78,7 +89,7 @@ public class Controller implements Initializable{
     public void fireButtonClicked(){
         if(!isInt(angleField)||!isInt(initialVField))
             return;
-        Model circle = new Model (10,300,Integer.parseInt(angleField.getText()),Integer.parseInt(initialVField.getText()));
+        Model circle = new Model (canonViewer.getLayoutX()+190,canonViewer.getLayoutY(),Integer.parseInt(angleField.getText()),Integer.parseInt(initialVField.getText()));
         circle.setG(5);
         circle.initialize();
         circle.fire();
@@ -93,7 +104,6 @@ public class Controller implements Initializable{
          gc = projectileLayer.getGraphicsContext2D();
          gcTraj = trajectoryLayer.getGraphicsContext2D();
         gc.setFill(Color.RED);
-        gc.fillOval(circle.getX(),circle.getY(),20,20);
         Image mrO = new Image("file:mro.jpg");
         Image ziqi = new Image("file:ziqi.jpg");
 
@@ -115,9 +125,12 @@ public class Controller implements Initializable{
                 circle.step(50);
                 if(selected.equals("Mr.O"))
                     gc.drawImage(mrO,circle.getX(),circle.getY());
-                else if (selected.equals("ball"))
-                    gc.fillOval(circle.getX(),circle.getY(),30,30);
-                else if(selected.equals("ziqi"))
+                else if (selected.equals("ball")) {
+                    if(!isInt(diameterField))
+                        return;
+
+                    gc.fillOval(circle.getX(), circle.getY(), Integer.parseInt(diameterField.getText()), Integer.parseInt(diameterField.getText()));
+                }else if(selected.equals("ziqi"))
                     gc.drawImage(ziqi,circle.getX(),circle.getY(),100,120);
                 gcTraj.fillOval(circle.getX()+10,circle.getY()+10,5,5);
             }

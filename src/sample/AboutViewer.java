@@ -21,7 +21,7 @@ public class AboutViewer  {
         window.setMinHeight(500);
 
         Label label = new Label();
-        label.setText("For Mr.O\nDeveloped by Chris Zhou\nJune 2015");
+        label.setText("For Mr.O\nDeveloped by:\nChris Zhou,\nRachel Lee, \nVarsha Sundar\nJune 2015");
         label.setFont(new Font("Arial",20));
         VBox layout = new VBox(10);
         layout.getChildren().add(label);

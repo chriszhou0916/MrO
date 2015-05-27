@@ -68,7 +68,7 @@
                   <TextField fx:id="angleField" maxWidth="54.0" prefHeight="26.0" prefWidth="54.0" GridPane.columnIndex="1" />
                   <TextField fx:id="initialVField" maxWidth="40.0" prefHeight="0.0" prefWidth="40.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <TextField maxWidth="40.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                  <TextField maxWidth="40.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <TextField fx:id="diameterField" maxWidth="40.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                </children>
                <VBox.margin>
                   <Insets />
@@ -94,11 +94,13 @@
    <center>
       <Pane fx:id="centralPane" prefHeight="643.0" prefWidth="796.0" BorderPane.alignment="CENTER">
          <children>
+            <ImageView fx:id="backgroundViewer" fitHeight="643.0" fitWidth="794.0" pickOnBounds="true" preserveRatio="true" />
             <ImageView fx:id="target" fitHeight="150.0" fitWidth="200.0" layoutX="524.0" layoutY="385.0" pickOnBounds="true" preserveRatio="true">
                <cursor>
                   <Cursor fx:constant="MOVE" />
                </cursor>
             </ImageView>
+            <ImageView fx:id="canonViewer" fitHeight="150.0" fitWidth="200.0" layoutX="43.0" layoutY="426.0" pickOnBounds="true" preserveRatio="true" />
          </children>
       </Pane>
    </center>
