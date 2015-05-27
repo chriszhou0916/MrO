@@ -3,8 +3,10 @@ import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
@@ -49,6 +51,7 @@ public class Controller implements Initializable{
     private Canvas bg,trajectoryLayer,projectileLayer;
     private AnimationTimer timer;
     private GraphicsContext gc,gcTraj;
+    private DragC dc;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -56,7 +59,9 @@ public class Controller implements Initializable{
         itemList.getItems().addAll("ball", "ziqi", "Mr.O","piano");
         Image img = new Image("file:persons.jpg");
         target.setImage(img);
-        centralPane.getChildren().add(makeDraggable(target));
+        makeDrag(target);
+        //centralPane.getChildren().add(makeDraggable(target));
+
     }
 
 
@@ -65,6 +70,7 @@ public class Controller implements Initializable{
     }
     public void eraseButtonClicked() {
         timer.stop();
+
         gc.clearRect(0,0,projectileLayer.getWidth(),projectileLayer.getHeight());
         gcTraj.clearRect(0,0,projectileLayer.getWidth(),projectileLayer.getHeight());
 
@@ -92,12 +98,16 @@ public class Controller implements Initializable{
         Image ziqi = new Image("file:ziqi.jpg");
 
 
+
 //        border.setCenter(shape);
 //        centralPane.getChildren().add(shape);
 //        Timeline timeline = new Timeline();
 //        timeline.setCycleCount(Timeline.INDEFINITE);
 
         String selected = itemList.getSelectionModel().getSelectedItem();
+        if(selected == null){
+            ErrorMessage.showMessage("please select a projectile");
+            return;}
         timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
@@ -161,11 +171,43 @@ public class Controller implements Initializable{
         return wrapGroup;
     }
 
+    private void makeDrag(Node n){
+        final Delta dragDelta = new Delta();
+        n.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override public void handle(MouseEvent mouseEvent) {
+                // record a delta distance for the drag and drop operation.
+                dragDelta.x = n.getLayoutX() - mouseEvent.getSceneX();
+                dragDelta.y = n.getLayoutY() - mouseEvent.getSceneY();
+                n.setCursor(Cursor.MOVE);
+            }
+        });
+        n.setOnMouseReleased(new EventHandler<MouseEvent>() {
+            @Override public void handle(MouseEvent mouseEvent) {
+                n.setCursor(Cursor.HAND);
+            }
+        });
+        n.setOnMouseDragged(new EventHandler<MouseEvent>() {
+            @Override public void handle(MouseEvent mouseEvent) {
+                n.setLayoutX(mouseEvent.getSceneX() + dragDelta.x);
+                n.setLayoutY(mouseEvent.getSceneY() + dragDelta.y);
+            }
+        });
+        n.setOnMouseEntered(new EventHandler<MouseEvent>() {
+            @Override public void handle(MouseEvent mouseEvent) {
+                n.setCursor(Cursor.HAND);
+            }
+        });
+    }
+
     private static final class DragC {
         public double mouseAnchorX;
         public double mouseAnchorY;
         public double initialTranslateX;
         public double initialTranslateY;
+    }
+
+    private static final class Delta{
+        double x,y;
     }
 
     private boolean isInt(TextField input){
