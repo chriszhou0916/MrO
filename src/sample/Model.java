@@ -45,7 +45,7 @@ public class Model
 
         currX = initialX + initialVX*timeSec + currAX*timeSec*timeSec*0.5;
         currY = initialY + initialVY*timeSec + currAY*timeSec*timeSec*0.5;
-        altitude = altitude+initialVY*timeSec + altitude*timeSec*timeSec*0.5;
+        altitude = altitude + initialVY*timeSec + altitude*timeSec*timeSec*0.5;
         if(altitude<=0)
         {
             isFlying=false;
@@ -57,6 +57,8 @@ public class Model
         initialX=x;
         initialY=y;
     }
+
+    public double getAltitude(){return altitude;}
 
     public void setG(double g){gravity = g;}
 

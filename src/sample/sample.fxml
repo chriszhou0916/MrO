@@ -35,15 +35,18 @@
                   <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="71.0" text="range(m)" />
                   <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="72.0" text="height(m)" GridPane.rowIndex="1" />
                   <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="66.0" text="time(s)" GridPane.rowIndex="2" />
-                  <TextField editable="false" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                  <TextField editable="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <TextField fx:id="timeField" editable="false" GridPane.columnIndex="1" />
+                  <TextField fx:id="timeField" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <TextField fx:id="heightField" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <TextField editable="false" GridPane.columnIndex="1" />
                </children>
                <opaqueInsets>
                   <Insets />
                </opaqueInsets>
             </GridPane>
-            <Pane prefHeight="41.0" prefWidth="150.0" />
+            <Pane prefHeight="41.0" prefWidth="150.0">
+               <children>
+                  <CheckBox fx:id="showTrack" layoutX="27.0" layoutY="11.0" mnemonicParsing="false" text="show track" />
+               </children></Pane>
             <ListView fx:id="itemList" prefHeight="200.0" prefWidth="200.0">
                <VBox.margin>
                   <Insets />
@@ -94,8 +97,8 @@
    <center>
       <Pane fx:id="centralPane" prefHeight="643.0" prefWidth="796.0" BorderPane.alignment="CENTER">
          <children>
-            <ImageView fx:id="backgroundViewer" fitHeight="642.0" fitWidth="796.0" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="target" fitHeight="150.0" fitWidth="200.0" layoutX="524.0" layoutY="385.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="backgroundViewer" fitHeight="643.0" fitWidth="794.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="target" fitHeight="80.0" fitWidth="100.0" layoutX="524.0" layoutY="385.0" pickOnBounds="true" preserveRatio="true">
                <cursor>
                   <Cursor fx:constant="MOVE" />
                </cursor>

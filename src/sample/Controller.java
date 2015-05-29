@@ -1,4 +1,5 @@
 package sample;
+import com.sun.org.apache.xpath.internal.operations.Mod;
 import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
@@ -24,6 +25,7 @@ import javafx.util.Duration;
 import javafx.scene.image.*;
 import javafx.util.converter.NumberStringConverter;
 
+import javax.xml.soap.Text;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -39,9 +41,13 @@ public class Controller implements Initializable{
     private Button fireButton;
 
     @FXML
-    private TextField timeField;
+    private CheckBox showTrack;
+    @FXML
+    private TextField heightField;
     @FXML
     private TextField angleField;
+    @FXML
+    private TextField timeField;
     @FXML
     private TextField initialVField;
     @FXML
@@ -60,13 +66,12 @@ public class Controller implements Initializable{
     private Canvas bg,trajectoryLayer,projectileLayer;
     private AnimationTimer timer;
     private GraphicsContext gc,gcTraj;
-    private DragC dc;
+    private Model circle;
+    private boolean isAnimating;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         //initialize itemList
-//        backgroundViewer.setFitHeight(centralPane.getHeight());
-//        backgroundViewer.pro;
         itemList.getItems().addAll("ball", "ziqi", "Mr.O","piano");
         Image background = new Image("file:plain-farm-background.png");
         backgroundViewer.setImage(background);
@@ -77,7 +82,7 @@ public class Controller implements Initializable{
         target.setImage(img);
         makeDrag(target);
         angleField.setOnKeyReleased(e -> {
-            if(!isInt(angleField))
+            if(!isDouble(angleField))
 
             e.consume();
             else{
@@ -86,7 +91,6 @@ public class Controller implements Initializable{
 
         });
          //centralPane.getChildren().add(makeDraggable(target));
-
     }
 
 
@@ -94,17 +98,22 @@ public class Controller implements Initializable{
         AboutViewer.display();
     }
     public void eraseButtonClicked() {
+        isAnimating = false;
         timer.stop();
         centralPane.getChildren().removeAll(trajectoryLayer,projectileLayer);
         gc.clearRect(0,0,projectileLayer.getWidth(),projectileLayer.getHeight());
         gcTraj.clearRect(0,0,projectileLayer.getWidth(),projectileLayer.getHeight());
 
     }
-    public void fireButtonClicked(){
-        if(!isInt(angleField)||!isInt(initialVField))
+    public void fireButtonClicked() {
+        if(isAnimating){
+            ErrorMessage.showMessage("one animation is running already\nplease click erase");
+            return;}
+        isAnimating = true;
+        if (!isDouble(angleField) || !isDouble(initialVField))
             return;
-        Model circle = new Model (canonViewer.getLayoutX()+190,canonViewer.getLayoutY(),Integer.parseInt(angleField.getText()),Integer.parseInt(initialVField.getText()));
-        circle.setG(2);
+        circle = new Model(canonViewer.getLayoutX() + 190, canonViewer.getLayoutY(), Double.parseDouble(angleField.getText()), Double.parseDouble(initialVField.getText()));
+        circle.setG(5);
         circle.initialize();
         circle.fire();
 //        Circle shape = new Circle(10,10,10);
@@ -112,17 +121,16 @@ public class Controller implements Initializable{
 //        shape.setLayoutY(circle.getY());
 //        shape.setLayoutX(circle.getX());
 
-        trajectoryLayer = new Canvas(centralPane.getWidth(),centralPane.getHeight());
-        projectileLayer = new Canvas(centralPane.getWidth(),centralPane.getHeight());
+        trajectoryLayer = new Canvas(centralPane.getWidth(), centralPane.getHeight());
+        projectileLayer = new Canvas(centralPane.getWidth(), centralPane.getHeight());
         canonViewer.setRotate(-Double.parseDouble(angleField.getText()));
 
 
-         gc = projectileLayer.getGraphicsContext2D();
-         gcTraj = trajectoryLayer.getGraphicsContext2D();
+        gc = projectileLayer.getGraphicsContext2D();
+        gcTraj = trajectoryLayer.getGraphicsContext2D();
         gc.setFill(Color.RED);
         Image mrO = new Image("file:mro.jpg");
         Image ziqi = new Image("file:ziqi.jpg");
-
 
 
 //        border.setCenter(shape);
@@ -131,85 +139,57 @@ public class Controller implements Initializable{
 //        timeline.setCycleCount(Timeline.INDEFINITE);
 
         String selected = itemList.getSelectionModel().getSelectedItem();
-        if(selected == null){
+        if (selected == null) {
             ErrorMessage.showMessage("please select a projectile");
-            return;}
+            return;
+        }
         timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                gc.clearRect(0,0,projectileLayer.getWidth(),projectileLayer.getHeight());
-                circle.step(50);
-                if(selected.equals("Mr.O"))
-                    gc.drawImage(mrO,circle.getX(),circle.getY());
-                else if (selected.equals("ball")) {
-                    if(!isInt(diameterField))
-                        return;
 
-                    gc.fillOval(circle.getX(), circle.getY(), Integer.parseInt(diameterField.getText()), Integer.parseInt(diameterField.getText()));
-                }else if(selected.equals("ziqi"))
-                    gc.drawImage(ziqi,circle.getX(),circle.getY(),100,120);
-                gcTraj.fillOval(circle.getX()+10,circle.getY()+10,5,5);
+                gc.clearRect(0, 0, projectileLayer.getWidth(), projectileLayer.getHeight());
+                circle.step(50);
+                if (selected.equals("Mr.O"))
+                    gc.drawImage(mrO, circle.getX(), circle.getY());
+                else if (selected.equals("ball")) {
+                    if (!isDouble(diameterField)) {
+                        ErrorMessage.showMessage("please enter diameter for ball");
+                        return;
+                    }
+                    double diameterSize = Double.parseDouble(diameterField.getText());
+                    gc.fillOval(circle.getX() - diameterSize / 2, circle.getY() - diameterSize / 2, diameterSize, diameterSize);
+                } else if (selected.equals("ziqi"))
+                    gc.drawImage(ziqi, circle.getX(), circle.getY(), 100, 120);
+                if (showTrack.isSelected())
+                    gcTraj.fillOval(circle.getX(), circle.getY(), 5, 5);
+                if (now % 100 == 0)
+                    updateFields();
             }
         };
         timer.start();
-        centralPane.getChildren().addAll(trajectoryLayer,projectileLayer);
+        centralPane.getChildren().addAll(trajectoryLayer, projectileLayer);
 //        KeyFrame moveBall = new KeyFrame(Duration.seconds(.02),e -> {
 //            shape.setTranslateX(1);
 //        });
 //        timeline.getKeyFrames().add(moveBall);
 //        timeline.play();
-
-
-
     }
-    private Node makeDraggable(final Node node) {
-        final DragC dragContext = new DragC();
-        final Group wrapGroup = new Group(node);
 
-
-        wrapGroup.addEventFilter(
-                MouseEvent.MOUSE_PRESSED,
-                mouseEvent -> {
-
-                        // remember initial mouse cursor coordinates
-                        // and node position
-                        dragContext.mouseAnchorX = mouseEvent.getX();
-                        dragContext.mouseAnchorY = mouseEvent.getY();
-                        dragContext.initialTranslateX =
-                                node.getTranslateX();
-                        dragContext.initialTranslateY =
-                                node.getTranslateY();
-                }
-        );
-
-        wrapGroup.addEventFilter(
-                MouseEvent.MOUSE_DRAGGED,
-                mouseEvent -> {
-                        // shift node from its initial position by delta
-                        // calculated from mouse cursor movement
-                        node.setTranslateX(
-                                dragContext.initialTranslateX
-                                        + mouseEvent.getX()
-                                        - dragContext.mouseAnchorX);
-                        node.setTranslateY(
-                                dragContext.initialTranslateY
-                                        + mouseEvent.getY()
-                                        - dragContext.mouseAnchorY);
-                }
-        );
-        return wrapGroup;
+    public void updateFields()
+    {
+        heightField.setText(String.valueOf(circle.getX()));
     }
+
 
     private void makeDrag(Node n){
         final Delta dragDelta = new Delta();
-        n.setOnMousePressed(new EventHandler<MouseEvent>() {
-            @Override public void handle(MouseEvent mouseEvent) {
+        n.setOnMousePressed(mouseEvent-> {
                 // record a delta distance for the drag and drop operation.
                 dragDelta.x = n.getLayoutX() - mouseEvent.getSceneX();
                 dragDelta.y = n.getLayoutY() - mouseEvent.getSceneY();
                 n.setCursor(Cursor.MOVE);
-            }
-        });
+            });
+
         n.setOnMouseReleased(new EventHandler<MouseEvent>() {
             @Override public void handle(MouseEvent mouseEvent) {
                 n.setCursor(Cursor.HAND);
@@ -228,22 +208,15 @@ public class Controller implements Initializable{
         });
     }
 
-    private static final class DragC {
-        public double mouseAnchorX;
-        public double mouseAnchorY;
-        public double initialTranslateX;
-        public double initialTranslateY;
-    }
-
     private static final class Delta{
         double x,y;
     }
 
-    private boolean isInt(TextField input){
-        if(input.getText().isEmpty())
+    private boolean isDouble(TextField input){
+        if(input.getText().isEmpty()||input.getText().equals("-"))
             return false;
         try{
-            int age = Integer.parseInt(input.getText());
+            double age = Double.parseDouble(input.getText());
             return true;
         }catch(NumberFormatException e){
             ErrorMessage.showMessage("Please enter valid number");
