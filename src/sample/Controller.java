@@ -3,6 +3,7 @@ import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.beans.binding.Bindings;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -21,6 +22,8 @@ import javafx.scene.shape.Circle;
 import javafx.util.Duration;
 
 import javafx.scene.image.*;
+import javafx.util.converter.NumberStringConverter;
+
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -62,16 +65,27 @@ public class Controller implements Initializable{
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         //initialize itemList
+//        backgroundViewer.setFitHeight(centralPane.getHeight());
+//        backgroundViewer.pro;
         itemList.getItems().addAll("ball", "ziqi", "Mr.O","piano");
-        Image background = new Image("file:background.png",794,643,false,false);
+        Image background = new Image("file:plain-farm-background.png");
         backgroundViewer.setImage(background);
-        Image img = new Image("file:persons.jpg");
+        Image img = new Image("file:target-round.png");
         Image canon = new Image("file:canon.png");
         canonViewer.setImage(canon);
         makeDrag(canonViewer);
         target.setImage(img);
         makeDrag(target);
-        //centralPane.getChildren().add(makeDraggable(target));
+        angleField.setOnKeyReleased(e -> {
+            if(!isInt(angleField))
+
+            e.consume();
+            else{
+                canonViewer.setRotate(-Double.parseDouble(angleField.getText()));
+            }
+
+        });
+         //centralPane.getChildren().add(makeDraggable(target));
 
     }
 
@@ -81,7 +95,7 @@ public class Controller implements Initializable{
     }
     public void eraseButtonClicked() {
         timer.stop();
-
+        centralPane.getChildren().removeAll(trajectoryLayer,projectileLayer);
         gc.clearRect(0,0,projectileLayer.getWidth(),projectileLayer.getHeight());
         gcTraj.clearRect(0,0,projectileLayer.getWidth(),projectileLayer.getHeight());
 
@@ -90,15 +104,17 @@ public class Controller implements Initializable{
         if(!isInt(angleField)||!isInt(initialVField))
             return;
         Model circle = new Model (canonViewer.getLayoutX()+190,canonViewer.getLayoutY(),Integer.parseInt(angleField.getText()),Integer.parseInt(initialVField.getText()));
-        circle.setG(5);
+        circle.setG(2);
         circle.initialize();
         circle.fire();
 //        Circle shape = new Circle(10,10,10);
 //        shape.setFill(Color.RED);
 //        shape.setLayoutY(circle.getY());
 //        shape.setLayoutX(circle.getX());
+
         trajectoryLayer = new Canvas(centralPane.getWidth(),centralPane.getHeight());
         projectileLayer = new Canvas(centralPane.getWidth(),centralPane.getHeight());
+        canonViewer.setRotate(-Double.parseDouble(angleField.getText()));
 
 
          gc = projectileLayer.getGraphicsContext2D();
@@ -224,6 +240,8 @@ public class Controller implements Initializable{
     }
 
     private boolean isInt(TextField input){
+        if(input.getText().isEmpty())
+            return false;
         try{
             int age = Integer.parseInt(input.getText());
             return true;
