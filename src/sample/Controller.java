@@ -84,6 +84,7 @@ public class Controller implements Initializable{
     private Timeline timeline,fieldsTimeLine;
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        border.minWidthProperty().bind(border.heightProperty().multiply(965/600));
         centralPane.prefHeightProperty().bind(border.heightProperty());
         rightMenu.prefHeightProperty().bind(border.heightProperty());
         //initialize itemList

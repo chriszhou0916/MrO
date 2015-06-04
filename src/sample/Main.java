@@ -1,6 +1,8 @@
 package sample;
 
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -13,7 +15,10 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         primaryStage.setTitle("Projectile-Motion");
-        primaryStage.setScene(new Scene(root, 965 ,600));
+        Scene scene = new Scene(root, 965 ,600);
+        primaryStage.setScene(scene);
+        primaryStage.minWidthProperty().bind(scene.heightProperty().multiply(965.0/600));
+        primaryStage.maxWidthProperty().bind(scene.heightProperty().multiply(965.0/600));
         primaryStage.show();
     }
 
