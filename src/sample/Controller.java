@@ -5,12 +5,11 @@ import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.binding.Bindings;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Point3D;
 import javafx.scene.Cursor;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -18,19 +17,18 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
 
 import javafx.scene.image.*;
 import javafx.util.converter.NumberStringConverter;
-
-import javax.xml.soap.Text;
 import java.net.URL;
 import java.util.ResourceBundle;
-
+import javafx.scene.text.*;
 
 public class Controller implements Initializable{
     @FXML
@@ -59,6 +57,8 @@ public class Controller implements Initializable{
     @FXML
     private BorderPane border;
     @FXML
+    private VBox rightMenu;
+    @FXML
     private ImageView target;
     @FXML
     private ImageView backgroundViewer;
@@ -70,20 +70,31 @@ public class Controller implements Initializable{
     private Circle canonBackCircle;
     @FXML
     private Circle canonBarrel;
+    @FXML
+    private Text scoreText;
 
     private Canvas bg,trajectoryLayer,projectileLayer;
     private AnimationTimer timer;
     private GraphicsContext gc,gcTraj;
     private Model circle;
-    private boolean isAnimating;
+    private boolean isAnimating,collisionDetected,textPrinted;
     private double barrelOriginalX,barrelOriginalY,barrelLength,originalAngle;
+    private ImageView mroView,ziqiView;
+    private String selected;
+    private Timeline timeline,fieldsTimeLine;
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        centralPane.prefHeightProperty().bind(border.heightProperty());
+        rightMenu.prefHeightProperty().bind(border.heightProperty());
         //initialize itemList
         itemList.getItems().addAll("ball", "ziqi", "Mr.O","piano");
         Image background = new Image("file:plain-farm-background.png");
         backgroundViewer.setImage(background);
+        backgroundViewer.fitHeightProperty().bind(rightMenu.heightProperty());
+        backgroundViewer.fitWidthProperty().bind(border.widthProperty());
+
         Image img = new Image("file:target-round.png");
+
         Image canon = new Image("file:canon.png");
         canonViewer.setImage(canon);
         makeDrag2(canonViewer,canonBackCircle);
@@ -101,7 +112,7 @@ public class Controller implements Initializable{
         double centerX = canonViewer.getLayoutX()+canonViewer.getFitWidth()/2;
         double centerY = canonViewer.getLayoutY()+ canonViewer.getFitHeight()/2;
         barrelLength = Math.sqrt((barrelOriginalX-centerX)*(barrelOriginalX-centerX)+(barrelOriginalY-centerY)*(barrelOriginalY-centerY));
-        originalAngle = Math.toDegrees(Math.atan((centerY-barrelOriginalY)/(barrelOriginalX-centerX)));
+        originalAngle = Math.toDegrees(Math.atan((centerY-barrelOriginalY)/ (barrelOriginalX-centerX)));
 
     }
 
@@ -110,16 +121,30 @@ public class Controller implements Initializable{
         AboutViewer.display();
     }
     public void eraseButtonClicked() {
+        if(selected==null||circle==null)
+        return;
         isAnimating = false;
-        timer.stop();
+        timeline.stop();
+        fieldsTimeLine.stop();
         centralPane.getChildren().removeAll(trajectoryLayer, projectileLayer);
         gc.clearRect(0, 0, projectileLayer.getWidth(), projectileLayer.getHeight());
         gcTraj.clearRect(0, 0, projectileLayer.getWidth(), projectileLayer.getHeight());
+        scoreText.setVisible(false);
+        textPrinted = false;
+        collisionDetected = false;
+        if(selected.equals("Mr.O"))
+        mroView.setVisible(false);
+        else if(selected.equals("ziqi"))
+        ziqiView.setVisible(false);
+        else if (selected.equals("ball"))
+        canonBarrel.setVisible(false);
+        heightField.clear();
+        timeField.clear();
 
     }
     public void fireButtonClicked() {
         shiftBarrel();
-        String selected = itemList.getSelectionModel().getSelectedItem();
+        selected = itemList.getSelectionModel().getSelectedItem();
         if (selected == null) {
             ErrorMessage.showMessage("please select a projectile");
             return;
@@ -141,40 +166,117 @@ public class Controller implements Initializable{
         gc = projectileLayer.getGraphicsContext2D();
         gcTraj = trajectoryLayer.getGraphicsContext2D();
         gc.setFill(Color.RED);
-        Image mrO = new Image("file:mro.jpg");
-        Image ziqi = new Image("file:ziqi.jpg");
-
-
-        timer = new AnimationTimer() {
-            @Override
-            public void handle(long now) {
-
-                gc.clearRect(0, 0, projectileLayer.getWidth(), projectileLayer.getHeight());
-                circle.step(30);
-                if (selected.equals("Mr.O"))
-                    gc.drawImage(mrO, circle.getX() - 50, circle.getY() - 62.5);
-                else if (selected.equals("ball")) {
-                    if (!isDouble(diameterField)) {
-                        ErrorMessage.showMessage("please enter diameter for ball");
-                        return;
-                    }
-                    double diameterSize = Double.parseDouble(diameterField.getText());
-                    gc.fillOval(circle.getX() - diameterSize / 2, circle.getY() - diameterSize / 2, diameterSize, diameterSize);
-                } else if (selected.equals("ziqi"))
-                    gc.drawImage(ziqi, circle.getX() - 50, circle.getY() - 60, 100, 120);
-                if (showTrack.isSelected())
-                    gcTraj.fillOval(circle.getX(), circle.getY(), 5, 5);
-                if (now % 100 == 0)
-                    updateFields();
-            }
-        };
-        timer.start();
         centralPane.getChildren().addAll(trajectoryLayer, projectileLayer);
+        if(selected.equals("ball")){
+            centralPane.getChildren().remove(canonBarrel);
+            centralPane.getChildren().add(canonBarrel);
+        }
+        if(selected.equals("Mr.O")){
+            Image mrO = new Image("file:mro.jpg");
+            mroView = new ImageView(mrO);
+            centralPane.getChildren().add(mroView);
+            mroView.setVisible(false);
+        }else if(selected.equals("ziqi")){
+            Image ziqi = new Image("file:ziqi.jpg");
+            ziqiView = new ImageView(ziqi);
+            ziqiView.setFitWidth(100);
+            ziqiView.setFitHeight(120);
+            centralPane.getChildren().add(ziqiView);
+            ziqiView.setVisible(false);
+        }
+        timeline = new Timeline();
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.getKeyFrames().add(
+
+                new KeyFrame(Duration.millis(30),
+                        e -> {
+                            gc.clearRect(0, 0, projectileLayer.getWidth(), projectileLayer.getHeight());
+                            circle.step(30);
+                            if (selected.equals("Mr.O")) {
+                                mroView.setVisible(true);
+                                mroView.relocate(circle.getX() - 50, circle.getY() - 62.5);
+                            }else if (selected.equals("ball")) {
+                                if (!isDouble(diameterField)) {
+                                    ErrorMessage.showMessage("please enter diameter for ball");
+                                    return;
+                                }
+                                double diameterSize = Double.parseDouble(diameterField.getText());
+                                canonBarrel.setVisible(true);
+                                canonBarrel.setRadius(diameterSize/2);
+                                canonBarrel.relocate(circle.getX() - diameterSize / 2, circle.getY() - diameterSize / 2);
+                            } else if (selected.equals("ziqi")){
+                                ziqiView.setVisible(true);
+                                ziqiView.relocate(circle.getX() - 50, circle.getY() - 60);
+                            }
+                            if (showTrack.isSelected())
+                                gcTraj.fillOval(circle.getX(), circle.getY(), 5, 5);
+                            if(!collisionDetected){
+                                if(selected.equals("ball"))
+                                    detectCollision(canonBarrel,target);
+                                else if (selected.equals("Mr.O"))
+                                    detectCollision(mroView,target);
+                                else if (selected.equals("ziqi"))
+                                    detectCollision(ziqiView,target);
+                            }
+                            else if (!textPrinted){
+                                scoreText.setVisible(true);
+
+                            }
+
+                        }));
+        fieldsTimeLine = new Timeline();
+        fieldsTimeLine.setCycleCount(Timeline.INDEFINITE);
+        fieldsTimeLine.getKeyFrames().add(new KeyFrame(Duration.seconds(1),
+                        e -> updateFields()));
+
+        timeline.playFromStart();
+        fieldsTimeLine.playFromStart();
+//        timer = new AnimationTimer() {
+//            @Override
+//            public void handle(long now) {
+//
+//                gc.clearRect(0, 0, projectileLayer.getWidth(), projectileLayer.getHeight());
+//                circle.step(30);
+//                if (selected.equals("Mr.O")) {
+//                    mroView.setVisible(true);
+//                    mroView.relocate(circle.getX() - 50, circle.getY() - 62.5);
+//                }else if (selected.equals("ball")) {
+//                    if (!isDouble(diameterField)) {
+//                        ErrorMessage.showMessage("please enter diameter for ball");
+//                        return;
+//                    }
+//                    double diameterSize = Double.parseDouble(diameterField.getText());
+//                    canonBarrel.setVisible(true);
+//                    canonBarrel.setRadius(diameterSize/2);
+//                    canonBarrel.relocate(circle.getX() - diameterSize / 2, circle.getY() - diameterSize / 2);
+//                } else if (selected.equals("ziqi")){
+//                    ziqiView.setVisible(true);
+//                    ziqiView.relocate(circle.getX() - 50, circle.getY() - 60);
+//                }
+//                if (showTrack.isSelected())
+//                    gcTraj.fillOval(circle.getX(), circle.getY(), 5, 5);
+//                if(!collisionDetected){
+//                    if(selected.equals("ball"))
+//                    detectCollision(canonBarrel,target);
+//                    else if (selected.equals("Mr.O"))
+//                        detectCollision(mroView,target);
+//                    else if (selected.equals("ziqi"))
+//                        detectCollision(ziqiView,target);
+//                }
+//                else if (!textPrinted){
+//                    scoreText.setVisible(true);
+//
+//                }
+//
+//            }
+//        };
+//        timer.start();
     }
 
     public void updateFields()
     {
         heightField.setText(String.valueOf(circle.getAltitude()));
+        timeField.setText(String.valueOf(circle.getTimeElapsed()));
     }
 
     private void shiftBarrel(){
@@ -183,7 +285,7 @@ public class Controller implements Initializable{
         double newAngle = originalAngle-canonViewer.getRotate();
         double newX = centerX+barrelLength*Math.cos(Math.toRadians(newAngle));
         double newY = centerY-barrelLength*Math.sin(Math.toRadians(newAngle));
-        canonBarrel.relocate(newX, newY-15);
+        canonBarrel.relocate(newX, newY - 15);
     }
     private void makeDrag(Node n){
         final Delta dragDelta = new Delta();
@@ -254,7 +356,7 @@ public class Controller implements Initializable{
         double x,y;
     }
 
-    private boolean isDouble(TextField input){
+    public boolean isDouble(TextField input){
         if(input.getText().isEmpty()||input.getText().equals("-"))
             return false;
         try{
@@ -265,4 +367,9 @@ public class Controller implements Initializable{
             return false;
         }
     }
+    public void detectCollision(Node a, Node b){
+        if(a.getBoundsInParent().intersects(b.getBoundsInParent()))
+            this.collisionDetected = true;
+    }
+
 }

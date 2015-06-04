@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.paint.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.canvas.*?>
 <?import javafx.scene.*?>
@@ -16,7 +17,7 @@
 
 <BorderPane fx:id="border" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
    <center>
-      <Pane fx:id="centralPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="637.0" prefWidth="787.0" BorderPane.alignment="TOP_LEFT">
+      <Pane fx:id="centralPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="636.0" prefWidth="787.0" BorderPane.alignment="TOP_LEFT">
          <children>
             <ImageView fx:id="backgroundViewer" fitHeight="650.0" fitWidth="776.0" layoutX="-1.0" layoutY="-7.0" pickOnBounds="true" preserveRatio="true" />
             <ImageView fx:id="target" fitHeight="80.0" fitWidth="100.0" layoutX="524.0" layoutY="385.0" pickOnBounds="true" preserveRatio="true">
@@ -27,7 +28,7 @@
             <Circle fx:id="canonBackCircle" fill="DODGERBLUE" layoutX="135.0" layoutY="428.0" opacity="0.19" radius="106.0" stroke="BLACK" strokeType="INSIDE" />
             <Circle fx:id="canonBarrel" fill="DODGERBLUE" layoutX="210.0" layoutY="390.0" radius="11.0" stroke="BLACK" strokeType="INSIDE" visible="false" />
             <ImageView fx:id="canonViewer" fitHeight="107.0" fitWidth="143.0" layoutX="64.0" layoutY="375.0" pickOnBounds="true" preserveRatio="true" />
-            <VBox layoutX="784.0" maxWidth="181.0" prefHeight="643.0" prefWidth="181.0" styleClass="right-menu" stylesheets="@MainMenu.css">
+            <VBox fx:id="rightMenu" alignment="CENTER_RIGHT" layoutX="784.0" maxWidth="181.0" prefHeight="643.0" prefWidth="181.0" styleClass="right-menu" stylesheets="@MainMenu.css">
                <padding>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </padding>
@@ -81,7 +82,7 @@
                         <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" prefHeight="16.0" prefWidth="99.0" text="gravity (m/s^2)" GridPane.rowIndex="2" />
                         <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" prefHeight="16.0" prefWidth="95.0" text="diameter(m)" GridPane.rowIndex="3" />
                         <TextField fx:id="angleField" maxWidth="54.0" prefHeight="26.0" text="0" GridPane.columnIndex="1" />
-                        <TextField fx:id="initialVField" prefHeight="0.0" text="20" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <TextField fx:id="initialVField" prefHeight="0.0" text="60" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <TextField fx:id="gravityField" text="9.8" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                         <TextField fx:id="diameterField" text="20" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                      </children>
@@ -106,6 +107,11 @@
                   </HBox>
                </children>
             </VBox>
+            <Text fx:id="scoreText" fill="RED" layoutX="360.0" layoutY="88.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Score!" visible="false">
+               <font>
+                  <Font size="43.0" />
+               </font>
+            </Text>
          </children>
       </Pane>
    </center>

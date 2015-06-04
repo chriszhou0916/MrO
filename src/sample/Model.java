@@ -65,4 +65,6 @@ public class Model
     public double getX(){return currX;}
 
     public double getY(){return currY;}
+
+    public double getTimeElapsed(){return timeElapsed/1000;}
 }
