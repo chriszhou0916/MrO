@@ -76,6 +76,7 @@ public class Controller implements Initializable{
     private GraphicsContext gc,gcTraj;
     private Model circle;
     private boolean isAnimating;
+    private double barrelOriginalX,barrelOriginalY,barrelLength,originalAngle;
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         //initialize itemList
@@ -95,7 +96,12 @@ public class Controller implements Initializable{
                 canonViewer.setRotate(-Double.parseDouble(angleField.getText()));
         });
         makeRotate2(canonBackCircle, canonViewer);
-
+        barrelOriginalX = canonBarrel.getLayoutX();
+        barrelOriginalY = canonBarrel.getLayoutY();
+        double centerX = canonViewer.getLayoutX()+canonViewer.getFitWidth()/2;
+        double centerY = canonViewer.getLayoutY()+ canonViewer.getFitHeight()/2;
+        barrelLength = Math.sqrt((barrelOriginalX-centerX)*(barrelOriginalX-centerX)+(barrelOriginalY-centerY)*(barrelOriginalY-centerY));
+        originalAngle = Math.toDegrees(Math.atan((centerY-barrelOriginalY)/(barrelOriginalX-centerX)));
 
     }
 
@@ -106,26 +112,29 @@ public class Controller implements Initializable{
     public void eraseButtonClicked() {
         isAnimating = false;
         timer.stop();
-        centralPane.getChildren().removeAll(trajectoryLayer,projectileLayer);
-        gc.clearRect(0,0,projectileLayer.getWidth(),projectileLayer.getHeight());
-        gcTraj.clearRect(0,0,projectileLayer.getWidth(),projectileLayer.getHeight());
+        centralPane.getChildren().removeAll(trajectoryLayer, projectileLayer);
+        gc.clearRect(0, 0, projectileLayer.getWidth(), projectileLayer.getHeight());
+        gcTraj.clearRect(0, 0, projectileLayer.getWidth(), projectileLayer.getHeight());
 
     }
     public void fireButtonClicked() {
-        System.out.println(canonBarrel.getLayoutX() + canonBarrel.getTranslateX() + ", " + canonBarrel.getLayoutY());
+        shiftBarrel();
         String selected = itemList.getSelectionModel().getSelectedItem();
         if (selected == null) {
             ErrorMessage.showMessage("please select a projectile");
             return;
         }
-        if(isAnimating){
+        if (isAnimating) {
             ErrorMessage.showMessage("one animation is running already\nplease click erase");
-            return;}
+            return;
+        }
         if (!isDouble(angleField) || !isDouble(initialVField) || !isDouble(gravityField))
             return;
-        circle = new Model(canonBarrel.getTranslateX(), canonBarrel.getCenterY(), Double.parseDouble(angleField.getText()), Double.parseDouble(initialVField.getText()));
+        circle = new Model(canonBarrel.getLayoutX(), canonBarrel.getLayoutY(), Double.parseDouble(angleField.getText()), Double.parseDouble(initialVField.getText()));
 
         circle.setG(Double.parseDouble(gravityField.getText()));
+        circle.initialize();
+        circle.fire();
         isAnimating = true;
         trajectoryLayer = new Canvas(centralPane.getWidth(), centralPane.getHeight());
         projectileLayer = new Canvas(centralPane.getWidth(), centralPane.getHeight());
@@ -136,20 +145,14 @@ public class Controller implements Initializable{
         Image ziqi = new Image("file:ziqi.jpg");
 
 
-//        border.setCenter(shape);
-//        centralPane.getChildren().add(shape);
-//        Timeline timeline = new Timeline();
-//        timeline.setCycleCount(Timeline.INDEFINITE);
-
-
         timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
 
                 gc.clearRect(0, 0, projectileLayer.getWidth(), projectileLayer.getHeight());
-                circle.step(50);
+                circle.step(30);
                 if (selected.equals("Mr.O"))
-                    gc.drawImage(mrO, circle.getX(), circle.getY());
+                    gc.drawImage(mrO, circle.getX() - 50, circle.getY() - 62.5);
                 else if (selected.equals("ball")) {
                     if (!isDouble(diameterField)) {
                         ErrorMessage.showMessage("please enter diameter for ball");
@@ -158,7 +161,7 @@ public class Controller implements Initializable{
                     double diameterSize = Double.parseDouble(diameterField.getText());
                     gc.fillOval(circle.getX() - diameterSize / 2, circle.getY() - diameterSize / 2, diameterSize, diameterSize);
                 } else if (selected.equals("ziqi"))
-                    gc.drawImage(ziqi, circle.getX(), circle.getY(), 100, 120);
+                    gc.drawImage(ziqi, circle.getX() - 50, circle.getY() - 60, 100, 120);
                 if (showTrack.isSelected())
                     gcTraj.fillOval(circle.getX(), circle.getY(), 5, 5);
                 if (now % 100 == 0)
@@ -167,11 +170,6 @@ public class Controller implements Initializable{
         };
         timer.start();
         centralPane.getChildren().addAll(trajectoryLayer, projectileLayer);
-//        KeyFrame moveBall = new KeyFrame(Duration.seconds(.02),e -> {
-//            shape.setTranslateX(1);
-//        });
-//        timeline.getKeyFrames().add(moveBall);
-//        timeline.play();
     }
 
     public void updateFields()
@@ -179,7 +177,14 @@ public class Controller implements Initializable{
         heightField.setText(String.valueOf(circle.getAltitude()));
     }
 
-
+    private void shiftBarrel(){
+        double centerX = canonViewer.getLayoutX()+canonViewer.getFitWidth()/2;
+        double centerY = canonViewer.getLayoutY()+canonViewer.getFitHeight()/2;
+        double newAngle = originalAngle-canonViewer.getRotate();
+        double newX = centerX+barrelLength*Math.cos(Math.toRadians(newAngle));
+        double newY = centerY-barrelLength*Math.sin(Math.toRadians(newAngle));
+        canonBarrel.relocate(newX, newY-15);
+    }
     private void makeDrag(Node n){
         final Delta dragDelta = new Delta();
         n.setOnMousePressed(mouseEvent-> {
@@ -207,8 +212,11 @@ public class Controller implements Initializable{
             dragDelta2.y = m.getLayoutY() - mouseEvent.getSceneY();
             n.setCursor(Cursor.MOVE);
         });
-        n.setOnMouseReleased(e -> n.setCursor(Cursor.HAND));
-        n.setOnMouseDragged(mouseEvent-> {
+        n.setOnMouseReleased(e -> {
+            n.setCursor(Cursor.HAND);
+            shiftBarrel();
+        });
+        n.setOnMouseDragged(mouseEvent -> {
             n.setLayoutX(mouseEvent.getSceneX() + dragDelta.x);
             n.setLayoutY(mouseEvent.getSceneY() + dragDelta.y);
             m.setLayoutX(mouseEvent.getSceneX() + dragDelta2.x);

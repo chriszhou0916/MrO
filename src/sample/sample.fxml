@@ -24,8 +24,8 @@
                   <Cursor fx:constant="MOVE" />
                </cursor>
             </ImageView>
-            <Circle fx:id="canonBarrel" fill="DODGERBLUE" layoutX="210.0" layoutY="390.0" radius="11.0" stroke="BLACK" strokeType="INSIDE" />
             <Circle fx:id="canonBackCircle" fill="DODGERBLUE" layoutX="135.0" layoutY="428.0" opacity="0.19" radius="106.0" stroke="BLACK" strokeType="INSIDE" />
+            <Circle fx:id="canonBarrel" fill="DODGERBLUE" layoutX="210.0" layoutY="390.0" radius="11.0" stroke="BLACK" strokeType="INSIDE" visible="false" />
             <ImageView fx:id="canonViewer" fitHeight="107.0" fitWidth="143.0" layoutX="64.0" layoutY="375.0" pickOnBounds="true" preserveRatio="true" />
             <VBox layoutX="784.0" maxWidth="181.0" prefHeight="643.0" prefWidth="181.0" styleClass="right-menu" stylesheets="@MainMenu.css">
                <padding>
