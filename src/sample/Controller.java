@@ -88,14 +88,14 @@ public class Controller implements Initializable{
         rightMenu.prefHeightProperty().bind(border.heightProperty());
         //initialize itemList
         itemList.getItems().addAll("ball", "ziqi", "Mr.O","piano");
-        Image background = new Image("file:plain-farm-background.png");
+        Image background = new Image("plain-farm-background.png");
         backgroundViewer.setImage(background);
         backgroundViewer.fitHeightProperty().bind(rightMenu.heightProperty());
         backgroundViewer.fitWidthProperty().bind(border.widthProperty());
 
-        Image img = new Image("file:target-round.png");
+        Image img = new Image("target-round.png");
 
-        Image canon = new Image("file:canon.png");
+        Image canon = new Image("canon.png");
         canonViewer.setImage(canon);
         makeDrag2(canonViewer,canonBackCircle);
         target.setImage(img);
@@ -172,12 +172,12 @@ public class Controller implements Initializable{
             centralPane.getChildren().add(canonBarrel);
         }
         if(selected.equals("Mr.O")){
-            Image mrO = new Image("file:mro.jpg");
+            Image mrO = new Image("mro.jpg");
             mroView = new ImageView(mrO);
             centralPane.getChildren().add(mroView);
             mroView.setVisible(false);
         }else if(selected.equals("ziqi")){
-            Image ziqi = new Image("file:ziqi.jpg");
+            Image ziqi = new Image("ziqi.jpg");
             ziqiView = new ImageView(ziqi);
             ziqiView.setFitWidth(100);
             ziqiView.setFitHeight(120);
