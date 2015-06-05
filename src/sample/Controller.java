@@ -23,59 +23,32 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
-
 import javafx.scene.image.*;
-import javafx.util.converter.NumberStringConverter;
 import java.net.URL;
 import java.util.ResourceBundle;
-import javafx.scene.text.*;
 
 public class Controller implements Initializable{
     @FXML
     private ListView<String> itemList;
-
-    @FXML
-    private Button aboutButton;
-
-    @FXML
-    private Button fireButton;
-
     @FXML
     private CheckBox showTrack;
     @FXML
-    private TextField heightField;
-    @FXML
-    private TextField angleField;
-    @FXML
-    private TextField timeField;
-    @FXML
-    private TextField initialVField;
-    @FXML
-    private TextField diameterField;
-    @FXML
-    private TextField gravityField;
+    private TextField heightField,angleField,timeField,initialVField,diameterField,gravityField;
     @FXML
     private BorderPane border;
     @FXML
     private VBox rightMenu;
     @FXML
-    private ImageView target;
-    @FXML
-    private ImageView backgroundViewer;
-    @FXML
-    private ImageView canonViewer;
+    private ImageView target,backgroundViewer,canonViewer;
     @FXML
     private Pane centralPane;
     @FXML
-    private Circle canonBackCircle;
-    @FXML
-    private Circle canonBarrel;
+    private Circle canonBackCircle,canonBarrel;
     @FXML
     private Text scoreText;
 
-    private Canvas bg,trajectoryLayer,projectileLayer;
-    private AnimationTimer timer;
-    private GraphicsContext gc,gcTraj;
+    private Canvas trajectoryLayer;
+    private GraphicsContext gcTraj;
     private Model circle;
     private boolean isAnimating,collisionDetected,textPrinted;
     private double barrelOriginalX,barrelOriginalY,barrelLength,originalAngle;
@@ -89,6 +62,7 @@ public class Controller implements Initializable{
         rightMenu.prefHeightProperty().bind(border.heightProperty());
         //initialize itemList
         itemList.getItems().addAll("ball", "ziqi", "Mr.O","piano");
+        itemList.getSelectionModel().selectFirst();
         Image background = new Image("plain-farm-background.png");
         backgroundViewer.setImage(background);
         backgroundViewer.fitHeightProperty().bind(rightMenu.heightProperty());
@@ -114,9 +88,7 @@ public class Controller implements Initializable{
         double centerY = canonViewer.getLayoutY()+ canonViewer.getFitHeight()/2;
         barrelLength = Math.sqrt((barrelOriginalX-centerX)*(barrelOriginalX-centerX)+(barrelOriginalY-centerY)*(barrelOriginalY-centerY));
         originalAngle = Math.toDegrees(Math.atan((centerY-barrelOriginalY)/ (barrelOriginalX-centerX)));
-
     }
-
 
     public void aboutButtonClicked(){
         AboutViewer.display();
@@ -127,9 +99,8 @@ public class Controller implements Initializable{
         isAnimating = false;
         timeline.stop();
         fieldsTimeLine.stop();
-        centralPane.getChildren().removeAll(trajectoryLayer, projectileLayer);
-        gc.clearRect(0, 0, projectileLayer.getWidth(), projectileLayer.getHeight());
-        gcTraj.clearRect(0, 0, projectileLayer.getWidth(), projectileLayer.getHeight());
+        centralPane.getChildren().remove(trajectoryLayer);
+        gcTraj.clearRect(0, 0, trajectoryLayer.getWidth(), trajectoryLayer.getHeight());
         scoreText.setVisible(false);
         textPrinted = false;
         collisionDetected = false;
@@ -141,7 +112,6 @@ public class Controller implements Initializable{
         canonBarrel.setVisible(false);
         heightField.clear();
         timeField.clear();
-
     }
     public void fireButtonClicked() {
         shiftBarrel();
@@ -162,12 +132,9 @@ public class Controller implements Initializable{
         circle.initialize();
         circle.fire();
         isAnimating = true;
-        trajectoryLayer = new Canvas(centralPane.getWidth(), centralPane.getHeight());
-        projectileLayer = new Canvas(centralPane.getWidth(), centralPane.getHeight());
-        gc = projectileLayer.getGraphicsContext2D();
+        trajectoryLayer = new Canvas(backgroundViewer.getFitWidth(), backgroundViewer.getFitHeight());
         gcTraj = trajectoryLayer.getGraphicsContext2D();
-        gc.setFill(Color.RED);
-        centralPane.getChildren().addAll(trajectoryLayer, projectileLayer);
+        centralPane.getChildren().add(trajectoryLayer);
         if(selected.equals("ball")){
             centralPane.getChildren().remove(canonBarrel);
             centralPane.getChildren().add(canonBarrel);
@@ -191,7 +158,6 @@ public class Controller implements Initializable{
 
                 new KeyFrame(Duration.millis(30),
                         e -> {
-                            gc.clearRect(0, 0, projectileLayer.getWidth(), projectileLayer.getHeight());
                             circle.step(30);
                             if (selected.equals("Mr.O")) {
                                 mroView.setVisible(true);
@@ -232,50 +198,9 @@ public class Controller implements Initializable{
 
         timeline.playFromStart();
         fieldsTimeLine.playFromStart();
-//        timer = new AnimationTimer() {
-//            @Override
-//            public void handle(long now) {
-//
-//                gc.clearRect(0, 0, projectileLayer.getWidth(), projectileLayer.getHeight());
-//                circle.step(30);
-//                if (selected.equals("Mr.O")) {
-//                    mroView.setVisible(true);
-//                    mroView.relocate(circle.getX() - 50, circle.getY() - 62.5);
-//                }else if (selected.equals("ball")) {
-//                    if (!isDouble(diameterField)) {
-//                        ErrorMessage.showMessage("please enter diameter for ball");
-//                        return;
-//                    }
-//                    double diameterSize = Double.parseDouble(diameterField.getText());
-//                    canonBarrel.setVisible(true);
-//                    canonBarrel.setRadius(diameterSize/2);
-//                    canonBarrel.relocate(circle.getX() - diameterSize / 2, circle.getY() - diameterSize / 2);
-//                } else if (selected.equals("ziqi")){
-//                    ziqiView.setVisible(true);
-//                    ziqiView.relocate(circle.getX() - 50, circle.getY() - 60);
-//                }
-//                if (showTrack.isSelected())
-//                    gcTraj.fillOval(circle.getX(), circle.getY(), 5, 5);
-//                if(!collisionDetected){
-//                    if(selected.equals("ball"))
-//                    detectCollision(canonBarrel,target);
-//                    else if (selected.equals("Mr.O"))
-//                        detectCollision(mroView,target);
-//                    else if (selected.equals("ziqi"))
-//                        detectCollision(ziqiView,target);
-//                }
-//                else if (!textPrinted){
-//                    scoreText.setVisible(true);
-//
-//                }
-//
-//            }
-//        };
-//        timer.start();
     }
 
-    public void updateFields()
-    {
+    private void updateFields() {
         heightField.setText(String.valueOf(circle.getAltitude()));
         timeField.setText(String.valueOf(circle.getTimeElapsed()));
     }
@@ -357,7 +282,7 @@ public class Controller implements Initializable{
         double x,y;
     }
 
-    public boolean isDouble(TextField input){
+    private boolean isDouble(TextField input){
         if(input.getText().isEmpty()||input.getText().equals("-"))
             return false;
         try{
@@ -368,9 +293,8 @@ public class Controller implements Initializable{
             return false;
         }
     }
-    public void detectCollision(Node a, Node b){
+    private void detectCollision(Node a, Node b){
         if(a.getBoundsInParent().intersects(b.getBoundsInParent()))
             this.collisionDetected = true;
     }
-
 }

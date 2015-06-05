@@ -17,8 +17,8 @@ public class AboutViewer  {
         Stage window = new Stage();
         window.initModality(Modality.APPLICATION_MODAL);
         window.setTitle("About this App");
-        window.setMinWidth(400);
-        window.setMinHeight(500);
+        window.setMinWidth(200);
+        window.setMinHeight(250);
 
         Label label = new Label();
         label.setText("For Mr.O\nDeveloped by:\nChris Zhou,\nRachel Lee, \nVarsha Sundar\nJune 2015");
