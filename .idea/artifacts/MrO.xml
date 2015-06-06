@@ -3,11 +3,11 @@
     <output-path>$PROJECT_DIR$/out/artifacts/MrO</output-path>
     <properties id="javafx-properties">
       <options>
-        <option name="appClass" value="sample.Main" />
-        <option name="description" value="" />
+        <option name="appClass" value="projectile.Main" />
+        <option name="description" value="Final CS project, Chris and Varsha" />
         <option name="htmlParamFile" value="" />
         <option name="paramFile" value="" />
-        <option name="title" value="" />
+        <option name="title" value="Projectile Simulation" />
         <option name="vendor" value="" />
       </options>
     </properties>

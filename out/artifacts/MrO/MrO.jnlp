@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <jnlp spec="1.0" xmlns:jfx="http://javafx.com" href="MrO.jnlp">
   <information>
-    <title>Sample JavaFX Application</title>
+    <title>Projectile Simulation</title>
     <vendor>Unknown vendor</vendor>
-    <description>Sample JavaFX 2.0 application.</description>
+    <description>Final CS project, Chris and Varsha</description>
     <offline-allowed/>
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="MrO.jar" size="337287" download="eager" />
+    <jar href="MrO.jar" size="338172" download="eager" />
   </resources>
-  <jfx:javafx-desc  width="600" height="400" main-class="sample.Main"  name="MrO" />
+  <jfx:javafx-desc  width="600" height="400" main-class="projectile.Main"  name="MrO" />
   <update check="background"/>
 </jnlp>
