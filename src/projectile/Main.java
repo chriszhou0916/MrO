@@ -1,8 +1,6 @@
-package sample;
+package projectile;
 
 import javafx.application.Application;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -13,7 +11,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("UILayout.fxml"));
         primaryStage.setTitle("Projectile-Motion");
         Scene scene = new Scene(root, 965 ,600);
         primaryStage.setScene(scene);

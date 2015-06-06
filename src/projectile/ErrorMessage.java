@@ -1,5 +1,4 @@
-package sample;
-
+package projectile;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -8,9 +7,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-
 /**
- * Created by chriszhou1 on 5/24/15.
+ *
  */
 public class ErrorMessage {
     public static void showMessage(String s){

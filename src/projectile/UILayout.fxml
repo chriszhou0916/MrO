@@ -11,19 +11,30 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane fx:id="border" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+<BorderPane fx:id="border" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="projectile.Controller">
    <center>
       <Pane fx:id="centralPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="636.0" prefWidth="787.0" BorderPane.alignment="TOP_LEFT">
          <children>
             <ImageView fx:id="backgroundViewer" fitHeight="650.0" fitWidth="776.0" layoutX="-1.0" layoutY="-7.0" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="target" fitHeight="80.0" fitWidth="100.0" layoutX="524.0" layoutY="385.0" pickOnBounds="true" preserveRatio="true">
+            <Rectangle fx:id="ground" arcHeight="5.0" arcWidth="5.0" height="17.0" layoutY="551.0" stroke="BLACK" strokeType="INSIDE" width="787.0">
+               <fill>
+                  <LinearGradient startX="1.0" startY="0.2211538461538461">
+                     <stops>
+                        <Stop color="#a45b1b" />
+                        <Stop color="#a45b1b" offset="0.00749063670411985" />
+                        <Stop color="WHITE" offset="1.0" />
+                     </stops>
+                  </LinearGradient>
+               </fill>
+            </Rectangle>
+            <ImageView fx:id="targetViewer" fitHeight="49.0" fitWidth="57.0" layoutX="524.0" layoutY="416.0" pickOnBounds="true" preserveRatio="true">
                <cursor>
                   <Cursor fx:constant="MOVE" />
                </cursor>
             </ImageView>
-            <Circle fx:id="canonBackCircle" fill="DODGERBLUE" layoutX="135.0" layoutY="428.0" opacity="0.19" radius="106.0" stroke="BLACK" strokeType="INSIDE" />
-            <Circle fx:id="canonBarrel" fill="DODGERBLUE" layoutX="210.0" layoutY="390.0" radius="11.0" stroke="BLACK" strokeType="INSIDE" visible="false" />
-            <ImageView fx:id="canonViewer" fitHeight="107.0" fitWidth="143.0" layoutX="64.0" layoutY="375.0" pickOnBounds="true" preserveRatio="true" />
+            <Circle fx:id="canonBackCircle" fill="DODGERBLUE" layoutX="136.0" layoutY="498.0" opacity="0.19" radius="106.0" stroke="BLACK" strokeType="INSIDE" />
+            <Circle fx:id="canonBarrel" fill="DODGERBLUE" layoutX="210.0" layoutY="450.0" radius="11.0" stroke="BLACK" strokeType="INSIDE" />
+            <ImageView fx:id="canonViewer" fitHeight="107.0" fitWidth="143.0" layoutX="64.0" layoutY="444.0" pickOnBounds="true" preserveRatio="true" />
             <Text fx:id="scoreText" fill="RED" layoutX="360.0" layoutY="88.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Score!" visible="false">
                <font>
                   <Font size="43.0" />
@@ -54,7 +65,7 @@
                   <Label alignment="CENTER_RIGHT" prefHeight="16.0" prefWidth="66.0" text="time(s)" GridPane.rowIndex="2" />
                   <TextField fx:id="timeField" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <TextField fx:id="heightField" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <TextField editable="false" GridPane.columnIndex="1" />
+                  <TextField fx:id="rangeField" editable="false" GridPane.columnIndex="1" />
                </children>
                <opaqueInsets>
                   <Insets />
