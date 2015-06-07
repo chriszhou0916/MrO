@@ -56,8 +56,8 @@ public class Controller implements Initializable {
     private GraphicsContext gcTraj;
     private ProjectileModel model;
     private boolean isAnimating, collisionDetected, textPrinted;
-    private double barrelOriginalX, barrelOriginalY, barrelLength, originalAngle;
-    private ImageView mroView, ziqiView;
+    private double barrelOriginalX, barrelOriginalY;
+    private ImageView mroView, ziqiView, pianoView,tankView;
     private String selected;
     private Timeline timeline, fieldsTimeLine;
 
@@ -77,7 +77,7 @@ public class Controller implements Initializable {
         ground.widthProperty().bind(backgroundViewer.fitWidthProperty());
 
         //initialize itemList for projectiles
-        itemList.getItems().addAll("ball", "ziqi", "Mr.O");
+        itemList.getItems().addAll("ball", "ziqi", "Mr.O","piano","tank");
         //sets ball as default projectile
         itemList.getSelectionModel().selectFirst();
         //imports the background picture and sets it into the ImageViewer
@@ -91,7 +91,7 @@ public class Controller implements Initializable {
         Image canon = new Image("canon.png");
         canonViewer.setImage(canon);
         //makes these things draggable as a group
-        makeDrag3(canonViewer, canonBackCircle, canonBarrel);
+        makeDrag2(canonViewer, canonBackCircle);
         targetViewer.setImage(img);
         makeDrag(targetViewer);
         //only draggable vertically
@@ -112,14 +112,17 @@ public class Controller implements Initializable {
         double centerY = canonViewer.getLayoutY() + canonViewer.getFitHeight() / 2;
         barrelOriginalX = canonBarrel.getLayoutX() - centerX;
         barrelOriginalY = centerY - canonBarrel.getLayoutY();
-        barrelLength = Math.sqrt((barrelOriginalX - centerX) * (barrelOriginalX - centerX) + (barrelOriginalY - centerY) * (barrelOriginalY - centerY));
-        originalAngle = Math.toDegrees(Math.atan((centerY - barrelOriginalY) / (barrelOriginalX - centerX)));
     }
 
     /**
      * called whenever the about button is clicked, displays about window
      */
     public void aboutButtonClicked() {
+        try {
+            int key = Integer.parseInt(diameterField.getText());
+            if(key==923)
+                targetViewer.setImage(new Image("persons.jpg"));
+        }catch (Exception e){}
         AboutViewer.display();
     }
 
@@ -147,6 +150,10 @@ public class Controller implements Initializable {
             ziqiView.setVisible(false);
         else if (selected.equals("ball"))
             canonBarrel.setVisible(false);
+        else if (selected.equals("piano"))
+            pianoView.setVisible(false);
+        else if (selected.equals("tank"))
+            tankView.setVisible(false);
         heightField.clear();
         timeField.clear();
         rangeField.clear();
@@ -194,12 +201,20 @@ public class Controller implements Initializable {
             centralPane.getChildren().add(mroView);
             mroView.setVisible(false);
         } else if (selected.equals("ziqi")) {
-            Image ziqi = new Image("ziqi.jpg");
-            ziqiView = new ImageView(ziqi);
-            ziqiView.setFitWidth(100);
-            ziqiView.setFitHeight(120);
-            centralPane.getChildren().add(ziqiView);
-            ziqiView.setVisible(false);
+                Image ziqi = new Image("ziqi.jpg");
+                ziqiView = new ImageView(ziqi);
+                centralPane.getChildren().add(ziqiView);
+                ziqiView.setVisible(false);
+        } else if (selected.equals("piano")) {
+            Image piano = new Image("grand-piano.png");
+            pianoView = new ImageView(piano);
+            centralPane.getChildren().add(pianoView);
+            pianoView.setVisible(false);
+        } else if (selected.equals("tank")) {
+            Image tank = new Image("tank3.png");
+            tankView = new ImageView(tank);
+            centralPane.getChildren().add(tankView);
+            tankView.setVisible(false);
         }
         timeline = new Timeline();
         timeline.setCycleCount(Timeline.INDEFINITE);
@@ -227,7 +242,13 @@ public class Controller implements Initializable {
                                 canonBarrel.relocate(model.getX() - diameterSize / 2, model.getY() - diameterSize / 2);
                             } else if (selected.equals("ziqi")) {
                                 ziqiView.setVisible(true);
-                                ziqiView.relocate(model.getX() - 50, model.getY() - 60);
+                                ziqiView.relocate(model.getX() - 50, model.getY() - 55.5);
+                            } else if (selected.equals("piano")) {
+                                pianoView.setVisible(true);
+                                pianoView.relocate(model.getX() - 50, model.getY() - 51.5);
+                            } else if (selected.equals("tank")) {
+                                tankView.setVisible(true);
+                                tankView.relocate(model.getX() - 75, model.getY() - 48);
                             }
                             //draws track
                             if (showTrack.isSelected())
@@ -271,18 +292,12 @@ public class Controller implements Initializable {
     private void shiftBarrel() {
         double centerX = canonViewer.getLayoutX() + canonViewer.getFitWidth() / 2;
         double centerY = canonViewer.getLayoutY() + canonViewer.getFitHeight() / 2;
-        canonBarrel.relocate(centerX+barrelOriginalX,centerY-barrelOriginalY);
-        System.out.println(canonBarrel.getLayoutX()+" "+canonBarrel.getLayoutY());
-        System.out.println(canonViewer.getRotate());
-//        Rotate rotation = new Rotate(canonViewer.getRotate(),centerX,centerY);
-//        Point2D transformed = rotation.transform(canonBarrel.getLayoutX(),canonBarrel.getLayoutY());
-//        canonBarrel.relocate(transformed.getX(),transformed.getY());
-        canonBarrel.getTransforms().add(new Rotate(canonViewer.getRotate(),centerX,centerY));
-        System.out.println(canonBarrel.getLayoutX()+" "+canonBarrel.getLayoutY());
-//        double newAngle = originalAngle - canonViewer.getRotate();
-//        double newX = centerX + barrelLength * Math.cos(Math.toRadians(newAngle));
-//        double newY = centerY - barrelLength * Math.sin(Math.toRadians(newAngle));
-//        canonBarrel.relocate(newX, newY - 15);
+        canonBarrel.setLayoutX(centerX+barrelOriginalX);
+        canonBarrel.setLayoutY(centerY-barrelOriginalY);
+        Rotate rotation = new Rotate(canonViewer.getRotate(),centerX,centerY);
+        Point2D transformed = rotation.transform(canonBarrel.getLayoutX(),canonBarrel.getLayoutY());
+        canonBarrel.setLayoutX(transformed.getX());
+        canonBarrel.setLayoutY(transformed.getY());
     }
 
     /**
@@ -340,9 +355,8 @@ public class Controller implements Initializable {
      * similar to makeDrag, but drags multiply elements at once
      * @param n main element
      * @param m other element to be moved with main element
-     * @param k other element to be moved with main element
      */
-    private void makeDrag3(Node n, Node m,Node k) {
+    private void makeDrag2(Node n, Node m) {
         final Delta dragD = new Delta();
         final Delta dragD2 = new Delta();
         final Delta dragD3 = new Delta();
@@ -352,8 +366,6 @@ public class Controller implements Initializable {
             dragD.y = n.getLayoutY() - e.getSceneY();
             dragD2.x = m.getLayoutX() - e.getSceneX();
             dragD2.y = m.getLayoutY() - e.getSceneY();
-            dragD3.x = k.getLayoutX() - e.getSceneX();
-            dragD3.y = k.getLayoutY() - e.getSceneY();
             n.setCursor(Cursor.MOVE);
         });
         n.setOnMouseReleased(e -> {
@@ -364,8 +376,6 @@ public class Controller implements Initializable {
             n.setLayoutY(e.getSceneY() + dragD.y);
             m.setLayoutX(e.getSceneX() + dragD2.x);
             m.setLayoutY(e.getSceneY() + dragD2.y);
-            k.setLayoutX(e.getSceneX() + dragD3.x);
-            k.setLayoutY(e.getSceneY() + dragD3.y);
         });
         n.setOnMouseEntered(e -> n.setCursor(Cursor.HAND));
     }

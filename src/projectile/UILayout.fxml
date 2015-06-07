@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!--
 This is an FXML file. It contains instructions of the layout of the java program. It works tightly
 with the controller class.
 -->
+
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.canvas.*?>
@@ -35,9 +37,9 @@ with the controller class.
                   <Cursor fx:constant="MOVE" />
                </cursor>
             </ImageView>
-            <Circle fx:id="canonBackCircle" fill="DODGERBLUE" layoutX="136.0" layoutY="498.0" opacity="0.19" radius="106.0" stroke="BLACK" strokeType="INSIDE" />
-            <Circle fx:id="canonBarrel" fill="DODGERBLUE" layoutX="210.0" layoutY="450.0" radius="11.0" stroke="BLACK" strokeType="INSIDE" />
-            <ImageView fx:id="canonViewer" fitHeight="107.0" fitWidth="143.0" layoutX="64.0" layoutY="444.0" pickOnBounds="true" preserveRatio="true" />
+            <Circle fx:id="canonBackCircle" fill="DODGERBLUE" layoutX="137.0" layoutY="527.0" opacity="0.19" radius="106.0" stroke="BLACK" strokeType="INSIDE" />
+            <ImageView fx:id="canonViewer" fitHeight="107.0" fitWidth="143.0" layoutX="66.0" layoutY="474.0" pickOnBounds="true" preserveRatio="true" />
+            <Circle fx:id="canonBarrel" fill="DODGERBLUE" layoutX="209.0" layoutY="485.0" radius="11.0" stroke="BLACK" strokeType="INSIDE" visible="false" />
             <Text fx:id="scoreText" fill="RED" layoutX="360.0" layoutY="88.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Score!" visible="false">
                <font>
                   <Font size="43.0" />
