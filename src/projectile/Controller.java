@@ -31,6 +31,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
+    private final int ANIMATION_INTERVAL = 30;
     @FXML
     private ListView<String> itemList;
     @FXML
@@ -57,7 +58,7 @@ public class Controller implements Initializable {
     private ProjectileModel model;
     private boolean isAnimating, collisionDetected, textPrinted;
     private double barrelOriginalX, barrelOriginalY;
-    private ImageView mroView, ziqiView, pianoView,tankView,pizzaView;
+    private ImageView mroView, ziqiView, pianoView,tankView,pizzaView,humanView,tomatoView;
     private String selected;
     private Timeline timeline, fieldsTimeLine;
 
@@ -77,7 +78,7 @@ public class Controller implements Initializable {
         ground.widthProperty().bind(backgroundViewer.fitWidthProperty());
 
         //initialize itemList for projectiles
-        itemList.getItems().addAll("ball", "ziqi", "Mr.O","piano","tank","pizza");
+        itemList.getItems().addAll("ball", "ziqi", "Mr.O","piano","tank","pizza","adult human","mystery");
         //sets ball as default projectile
         itemList.getSelectionModel().selectFirst();
         //imports the background picture and sets it into the ImageViewer
@@ -100,7 +101,7 @@ public class Controller implements Initializable {
         //another lambda expression, adjusts canon angle whenever the user inputs a new angle in the angleField
         angleField.setOnKeyReleased(e -> {
             //checks if input is valid, if not, the event is consumed
-            if (!isDouble(angleField))
+            if (notDouble(angleField))
                 e.consume();
             else
                 canonViewer.setRotate(-Double.parseDouble(angleField.getText()));
@@ -122,7 +123,9 @@ public class Controller implements Initializable {
             int key = Integer.parseInt(diameterField.getText());
             if(key==923)
                 targetViewer.setImage(new Image("persons.jpg"));
-        }catch (Exception e){}
+        }catch (NumberFormatException e){
+            ErrorMessage.showMessage("hint: easter egg hides here");
+        }
         AboutViewer.display();
     }
 
@@ -144,18 +147,32 @@ public class Controller implements Initializable {
         scoreText.setVisible(false);
         textPrinted = false;
         collisionDetected = false;
-        if (selected.equals("Mr.O"))
-            mroView.setVisible(false);
-        else if (selected.equals("ziqi"))
-            ziqiView.setVisible(false);
-        else if (selected.equals("ball"))
-            canonBarrel.setVisible(false);
-        else if (selected.equals("piano"))
-            pianoView.setVisible(false);
-        else if (selected.equals("tank"))
-            tankView.setVisible(false);
-        else if (selected.equals("pizza"))
-            pizzaView.setVisible(false);
+        switch (selected) {
+            case "Mr.O":
+                mroView.setVisible(false);
+                break;
+            case "ziqi":
+                ziqiView.setVisible(false);
+                break;
+            case "ball":
+                canonBarrel.setVisible(false);
+                break;
+            case "piano":
+                pianoView.setVisible(false);
+                break;
+            case "tank":
+                tankView.setVisible(false);
+                break;
+            case "pizza":
+                pizzaView.setVisible(false);
+                break;
+            case "adult human":
+                humanView.setVisible(false);
+                break;
+            case "mystery":
+                tomatoView.setVisible(false);
+                break;
+        }
         heightField.clear();
         timeField.clear();
         rangeField.clear();
@@ -177,9 +194,9 @@ public class Controller implements Initializable {
             ErrorMessage.showMessage("one animation is running already\nplease click erase");
             return;
         }
-        if (!isDouble(angleField) || !isDouble(initialVField) || !isDouble(gravityField))
+        if (notDouble(angleField) || notDouble(initialVField) || notDouble(gravityField))
             return;
-        if(selected=="ball"&&!isDouble(diameterField)){
+        if(selected.equals("ball")&& notDouble(diameterField)){
                 return;
         }
         //creates mathematical model
@@ -193,41 +210,62 @@ public class Controller implements Initializable {
         gcTraj = trajectoryLayer.getGraphicsContext2D();
         //add canvas to the display
         centralPane.getChildren().add(trajectoryLayer);
-        if (selected.equals("ball")) {
-            centralPane.getChildren().remove(canonBarrel);
-            centralPane.getChildren().add(canonBarrel);
-        } else if (selected.equals("Mr.O")) {
-            Image mrO = new Image("mro.jpg");
-            mroView = new ImageView(mrO);
-            centralPane.getChildren().add(mroView);
-            mroView.setVisible(false);
-        } else if (selected.equals("ziqi")) {
+        switch (selected) {
+            case "ball":
+                centralPane.getChildren().remove(canonBarrel);
+                centralPane.getChildren().add(canonBarrel);
+                break;
+            case "Mr.O":
+                Image mrO = new Image("mro.jpg");
+                mroView = new ImageView(mrO);
+                centralPane.getChildren().add(mroView);
+                mroView.setVisible(false);
+                break;
+            case "ziqi":
                 Image ziqi = new Image("ziqi.jpg");
                 ziqiView = new ImageView(ziqi);
                 centralPane.getChildren().add(ziqiView);
                 ziqiView.setVisible(false);
-        } else if (selected.equals("piano")) {
-            Image piano = new Image("grand-piano.png");
-            pianoView = new ImageView(piano);
-            centralPane.getChildren().add(pianoView);
-            pianoView.setVisible(false);
-        } else if (selected.equals("tank")) {
-            Image tank = new Image("tank3.png");
-            tankView = new ImageView(tank);
-            centralPane.getChildren().add(tankView);
-            tankView.setVisible(false);
-        } else if (selected.equals("pizza")){
-            Image pizza = new Image("pizza6.png");
-            pizzaView = new ImageView(pizza);
-            centralPane.getChildren().add(pizzaView);
-            pizzaView.setVisible(false);
+                break;
+            case "piano":
+                Image piano = new Image("grand-piano.png");
+                pianoView = new ImageView(piano);
+                centralPane.getChildren().add(pianoView);
+                pianoView.setVisible(false);
+                break;
+            case "tank":
+                Image tank = new Image("tank3.png");
+                tankView = new ImageView(tank);
+                centralPane.getChildren().add(tankView);
+                tankView.setVisible(false);
+                break;
+            case "pizza":
+                Image pizza = new Image("pizza6.png");
+                pizzaView = new ImageView(pizza);
+                centralPane.getChildren().add(pizzaView);
+                pizzaView.setVisible(false);
+                break;
+            case "adult human": {
+                Image human = new Image("human.png");
+                humanView = new ImageView(human);
+                centralPane.getChildren().add(humanView);
+                humanView.setVisible(false);
+                break;
+            }
+            case "mystery": {
+                Image human = new Image("tomato5.png");
+                tomatoView = new ImageView(human);
+                centralPane.getChildren().add(tomatoView);
+                tomatoView.setVisible(false);
+                break;
+            }
         }
 
         timeline = new Timeline();
         timeline.setCycleCount(Timeline.INDEFINITE);
         //a key frame is executed after a certain amount of time in the timeline
         timeline.getKeyFrames().add(
-                new KeyFrame(Duration.millis(30),
+                new KeyFrame(Duration.millis(ANIMATION_INTERVAL),
                         //lambda expression again, this time notice the body is super long, instead of one line
                         e -> {
                             //checks if the projectile hits the ground
@@ -237,40 +275,75 @@ public class Controller implements Initializable {
                                 return;
                             }
                             //increments model
-                            model.step(30);
-                            if (selected.equals("Mr.O")) {
-                                mroView.setVisible(true);
-                                mroView.relocate(model.getX() - 50, model.getY() - 62.5);
-                            } else if (selected.equals("ball")) {
-                                //saves diameter of the ball
-                                double diameterSize = Double.parseDouble(diameterField.getText());
-                                canonBarrel.setVisible(true);
-                                canonBarrel.setRadius(diameterSize / 2);
-                                canonBarrel.relocate(model.getX() - diameterSize / 2, model.getY() - diameterSize / 2);
-                            } else if (selected.equals("ziqi")) {
-                                ziqiView.setVisible(true);
-                                ziqiView.relocate(model.getX() - 50, model.getY() - 55.5);
-                            } else if (selected.equals("piano")) {
-                                pianoView.setVisible(true);
-                                pianoView.relocate(model.getX() - 50, model.getY() - 51.5);
-                            } else if (selected.equals("tank")) {
-                                tankView.setVisible(true);
-                                tankView.relocate(model.getX() - 75, model.getY() - 48);
-                            } else if (selected.equals("pizza")){
-                                pizzaView.setVisible(true);
-                                pizzaView.relocate(model.getX() - 50, model.getY() - 53.5);
+                            model.step(ANIMATION_INTERVAL);
+                            switch (selected) {
+                                case "Mr.O":
+                                    mroView.setVisible(true);
+                                    mroView.relocate(model.getX() - 50, model.getY() - 62.5);
+                                    break;
+                                case "ball":
+                                    //saves diameter of the ball
+                                    double diameterSize = Double.parseDouble(diameterField.getText());
+                                    canonBarrel.setVisible(true);
+                                    canonBarrel.setRadius(diameterSize / 2);
+                                    canonBarrel.relocate(model.getX() - diameterSize / 2, model.getY() - diameterSize / 2);
+                                    break;
+                                case "ziqi":
+                                    ziqiView.setVisible(true);
+                                    ziqiView.relocate(model.getX() - 50, model.getY() - 55.5);
+                                    break;
+                                case "piano":
+                                    pianoView.setVisible(true);
+                                    pianoView.relocate(model.getX() - 50, model.getY() - 51.5);
+                                    break;
+                                case "tank":
+                                    tankView.setVisible(true);
+                                    tankView.relocate(model.getX() - 75, model.getY() - 48);
+                                    break;
+                                case "pizza":
+                                    pizzaView.setVisible(true);
+                                    pizzaView.relocate(model.getX() - 50, model.getY() - 53.5);
+                                    break;
+                                case "adult human":
+                                    humanView.setVisible(true);
+                                    humanView.relocate(model.getX() - 50, model.getY() - 51.5);
+                                    break;
+                                case "mystery":
+                                    tomatoView.setVisible(true);
+                                    tomatoView.relocate(model.getX() - 50, model.getY() - 50);
+                                    break;
                             }
                             //draws track
                             if (showTrack.isSelected())
                                 gcTraj.fillOval(model.getX(), model.getY(), 5, 5);
                             //checks collisions
                             if (!collisionDetected) {
-                                if (selected.equals("ball"))
-                                    detectCollision(canonBarrel, targetViewer);
-                                else if (selected.equals("Mr.O"))
-                                    detectCollision(mroView, targetViewer);
-                                else if (selected.equals("ziqi"))
-                                    detectCollision(ziqiView, targetViewer);
+                                switch (selected) {
+                                    case "ball":
+                                        detectCollision(canonBarrel, targetViewer);
+                                        break;
+                                    case "Mr.O":
+                                        detectCollision(mroView, targetViewer);
+                                        break;
+                                    case "ziqi":
+                                        detectCollision(ziqiView, targetViewer);
+                                        break;
+                                    case "piano":
+                                        detectCollision(pianoView, targetViewer);
+                                        break;
+                                    case "tank":
+                                        detectCollision(tankView, targetViewer);
+                                        break;
+                                    case "pizza":
+                                        detectCollision(pizzaView, targetViewer);
+                                        break;
+                                    case "adult human":
+                                        detectCollision(humanView, targetViewer);
+                                        break;
+                                    case "mystery":
+                                        detectCollision(tomatoView, targetViewer);
+                                        break;
+                                }
                             } else if (!textPrinted) {
                                 scoreText.setVisible(true);
                                 textPrinted = true;
@@ -342,7 +415,7 @@ public class Controller implements Initializable {
      * @param m other element to be moved with main element
      * @param k other element to be moved with main element
      */
-    public void makeDragUpDown(Node n,Node m, Node k){
+    private void makeDragUpDown(Node n, Node m, Node k){
         final Delta dragD = new Delta();
         final Delta dragD2 = new Delta();
         final Delta dragD3 = new Delta();
@@ -369,7 +442,6 @@ public class Controller implements Initializable {
     private void makeDrag2(Node n, Node m) {
         final Delta dragD = new Delta();
         final Delta dragD2 = new Delta();
-        final Delta dragD3 = new Delta();
         n.setOnMousePressed(e -> {
             // record a delta distance for the drag and drop operation.
             dragD.x = n.getLayoutX() - e.getSceneX();
@@ -378,9 +450,7 @@ public class Controller implements Initializable {
             dragD2.y = m.getLayoutY() - e.getSceneY();
             n.setCursor(Cursor.MOVE);
         });
-        n.setOnMouseReleased(e -> {
-            n.setCursor(Cursor.HAND);
-        });
+        n.setOnMouseReleased(e -> n.setCursor(Cursor.HAND));
         n.setOnMouseDragged(e -> {
             n.setLayoutX(e.getSceneX() + dragD.x);
             n.setLayoutY(e.getSceneY() + dragD.y);
@@ -434,22 +504,22 @@ public class Controller implements Initializable {
      * @param input target textfield to be checked
      * @return result
      */
-    private boolean isDouble(TextField input) {
+    private boolean notDouble(TextField input) {
         if (input.getText().isEmpty() || input.getText().equals("-"))
-            return false;
-        try {
-            double age = Double.parseDouble(input.getText());
             return true;
+        try {
+            @SuppressWarnings("UnusedAssignment") double age = Double.parseDouble(input.getText());
+            return false;
         } catch (NumberFormatException e) {
             ErrorMessage.showMessage("Please enter valid number");
-            return false;
+            return true;
         }
     }
 
     /**
      * detects collision between two Nodes
-     * @param a
-     * @param b
+     * @param a first component
+     * @param b second component
      */
     private void detectCollision(Node a, Node b) {
         if (a.getBoundsInParent().intersects(b.getBoundsInParent()))

@@ -28,7 +28,7 @@ public class Main extends Application {
         //as well. This is known as one directional binding
         //you can also do bi-directional binding as well
         //here, the width changes with respect to the height, while preserving the initial
-        //rato of the window
+        //ratio of the window
         primaryStage.minWidthProperty().bind(scene.heightProperty().multiply(965.0/600));
         primaryStage.maxWidthProperty().bind(scene.heightProperty().multiply(965.0/600));
         primaryStage.show();
