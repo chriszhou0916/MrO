@@ -170,6 +170,9 @@ public class Controller implements Initializable {
         }
         if (!isDouble(angleField) || !isDouble(initialVField) || !isDouble(gravityField))
             return;
+        if(selected=="ball"&&!isDouble(diameterField)){
+                return;
+        }
         //creates mathematical model
         model = new ProjectileModel(canonBarrel.getLayoutX(), canonBarrel.getLayoutY(), Double.parseDouble(angleField.getText()), Double.parseDouble(initialVField.getText()));
         model.setG(Double.parseDouble(gravityField.getText()));
@@ -217,10 +220,6 @@ public class Controller implements Initializable {
                                 mroView.setVisible(true);
                                 mroView.relocate(model.getX() - 50, model.getY() - 62.5);
                             } else if (selected.equals("ball")) {
-                                if (!isDouble(diameterField)) {
-                                    ErrorMessage.showMessage("please enter diameter for ball");
-                                    return;
-                                }
                                 //saves diameter of the ball
                                 double diameterSize = Double.parseDouble(diameterField.getText());
                                 canonBarrel.setVisible(true);
@@ -275,9 +274,10 @@ public class Controller implements Initializable {
         canonBarrel.relocate(centerX+barrelOriginalX,centerY-barrelOriginalY);
         System.out.println(canonBarrel.getLayoutX()+" "+canonBarrel.getLayoutY());
         System.out.println(canonViewer.getRotate());
-        Rotate rotation = new Rotate(canonViewer.getRotate(),centerX,centerY);
-        Point2D transformed = rotation.transform(canonBarrel.getLayoutX(),canonBarrel.getLayoutY());
-        canonBarrel.relocate(transformed.getX(),transformed.getY());
+//        Rotate rotation = new Rotate(canonViewer.getRotate(),centerX,centerY);
+//        Point2D transformed = rotation.transform(canonBarrel.getLayoutX(),canonBarrel.getLayoutY());
+//        canonBarrel.relocate(transformed.getX(),transformed.getY());
+        canonBarrel.getTransforms().add(new Rotate(canonViewer.getRotate(),centerX,centerY));
         System.out.println(canonBarrel.getLayoutX()+" "+canonBarrel.getLayoutY());
 //        double newAngle = originalAngle - canonViewer.getRotate();
 //        double newX = centerX + barrelLength * Math.cos(Math.toRadians(newAngle));
