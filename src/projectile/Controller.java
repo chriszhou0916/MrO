@@ -57,7 +57,7 @@ public class Controller implements Initializable {
     private ProjectileModel model;
     private boolean isAnimating, collisionDetected, textPrinted;
     private double barrelOriginalX, barrelOriginalY;
-    private ImageView mroView, ziqiView, pianoView,tankView;
+    private ImageView mroView, ziqiView, pianoView,tankView,pizzaView;
     private String selected;
     private Timeline timeline, fieldsTimeLine;
 
@@ -77,7 +77,7 @@ public class Controller implements Initializable {
         ground.widthProperty().bind(backgroundViewer.fitWidthProperty());
 
         //initialize itemList for projectiles
-        itemList.getItems().addAll("ball", "ziqi", "Mr.O","piano","tank");
+        itemList.getItems().addAll("ball", "ziqi", "Mr.O","piano","tank","pizza");
         //sets ball as default projectile
         itemList.getSelectionModel().selectFirst();
         //imports the background picture and sets it into the ImageViewer
@@ -154,6 +154,8 @@ public class Controller implements Initializable {
             pianoView.setVisible(false);
         else if (selected.equals("tank"))
             tankView.setVisible(false);
+        else if (selected.equals("pizza"))
+            pizzaView.setVisible(false);
         heightField.clear();
         timeField.clear();
         rangeField.clear();
@@ -194,8 +196,7 @@ public class Controller implements Initializable {
         if (selected.equals("ball")) {
             centralPane.getChildren().remove(canonBarrel);
             centralPane.getChildren().add(canonBarrel);
-        }
-        if (selected.equals("Mr.O")) {
+        } else if (selected.equals("Mr.O")) {
             Image mrO = new Image("mro.jpg");
             mroView = new ImageView(mrO);
             centralPane.getChildren().add(mroView);
@@ -215,7 +216,13 @@ public class Controller implements Initializable {
             tankView = new ImageView(tank);
             centralPane.getChildren().add(tankView);
             tankView.setVisible(false);
+        } else if (selected.equals("pizza")){
+            Image pizza = new Image("pizza6.png");
+            pizzaView = new ImageView(pizza);
+            centralPane.getChildren().add(pizzaView);
+            pizzaView.setVisible(false);
         }
+
         timeline = new Timeline();
         timeline.setCycleCount(Timeline.INDEFINITE);
         //a key frame is executed after a certain amount of time in the timeline
@@ -249,6 +256,9 @@ public class Controller implements Initializable {
                             } else if (selected.equals("tank")) {
                                 tankView.setVisible(true);
                                 tankView.relocate(model.getX() - 75, model.getY() - 48);
+                            } else if (selected.equals("pizza")){
+                                pizzaView.setVisible(true);
+                                pizzaView.relocate(model.getX() - 50, model.getY() - 53.5);
                             }
                             //draws track
                             if (showTrack.isSelected())
