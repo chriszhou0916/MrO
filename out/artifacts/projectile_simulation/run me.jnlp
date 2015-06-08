@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<jnlp spec="1.0" xmlns:jfx="http://javafx.com" href="MrO.jnlp">
+<jnlp spec="1.0" xmlns:jfx="http://javafx.com" href="run me.jnlp">
   <information>
     <title>Projectile Simulation</title>
     <vendor>Unknown vendor</vendor>
@@ -8,8 +8,8 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="MrO.jar" size="321654" download="eager" />
+    <jar href="run me.jar" size="322022" download="eager" />
   </resources>
-  <jfx:javafx-desc  width="600" height="400" main-class="projectile.Main"  name="MrO" />
+  <jfx:javafx-desc  width="600" height="400" main-class="projectile.Main"  name="projectile simulation" />
   <update check="background"/>
 </jnlp>

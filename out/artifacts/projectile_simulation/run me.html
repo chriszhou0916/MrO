@@ -3,7 +3,7 @@
 <script>
     function launchApplication(jnlpfile) {
         dtjava.launch(            {
-                url : 'MrO.jnlp'
+                url : 'run me.jnlp'
             },
             {
                 javafx : '8.0+'
@@ -15,11 +15,11 @@
 </script>
 
 <script>
-    function javafxEmbed_MrO_id() {
+    function javafxEmbed_run me_id() {
         dtjava.embed(
             {
-                id : 'MrO_id',
-                url : 'MrO.jnlp',
+                id : 'run me_id',
+                url : 'run me.jnlp',
                 placeholder : 'javafx-app-placeholder',
                 width : 600,
                 height : 400
@@ -31,12 +31,12 @@
         );
     }
     <!-- Embed FX application into web page once page is loaded -->
-    dtjava.addOnloadCallback(javafxEmbed_MrO_id);
+    dtjava.addOnloadCallback(javafxEmbed_run me_id);
 </script>
 
 </head><body>
-<h2>Test page for <b>MrO</b></h2>
-  <b>Webstart:</b> <a href='MrO.jnlp' onclick="return launchApplication('MrO.jnlp');">click to launch this app as webstart</a><br><hr><br>
+<h2>Test page for <b>projectile simulation</b></h2>
+  <b>Webstart:</b> <a href='run me.jnlp' onclick="return launchApplication('run me.jnlp');">click to launch this app as webstart</a><br><hr><br>
 
   <!-- Applet will be inserted here -->
   <div id='javafx-app-placeholder'></div>
